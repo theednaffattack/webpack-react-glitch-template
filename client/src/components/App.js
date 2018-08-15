@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
 
 import '../styles/App.css'
+import Home from './Home'
+import Dashboard from './Dashboard'
+import { Router, Link } from "@reach/router";
 
-const StyledH1 = styled.h1`
-  color: green;
-`;
+
 
 class App extends Component {
   render() {
     return(
       <div>
-        <h1>This is CSS</h1>
-        <StyledH1>This is CSS-in-JS </ StyledH1>
+      <nav>
+        <Link to="/">Home</Link> <Link to="dashboard">Dashboard</Link>
+      </nav>
+      <Router>
+        <Home path="/" />
+        <Dashboard path="dashboard" />
+      </Router>
       </div>
     );
   }

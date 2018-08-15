@@ -32,16 +32,6 @@ app.get("/", function(request, response) {
   response.sendFile(path.resolve(__dirname + '/../dist/index.html'));
 });
 
-app.post('/api/getShortLink', (req, res, next) => {
-  // const { hash } = req.body;
-  console.log('hash');
-  console.log(req.body);
-  // const id = atob(hash);
-  // let shortLink = {hash: baseId, }
-  // TODO: add the host data
-  res.send(req.body);
-});
-
 app.get('/:hash', (req, res) => {
   const baseId = req.params.hash;
   const id = atob(baseId);
@@ -53,6 +43,31 @@ app.get('/:hash', (req, res) => {
     }
   });
 });
+
+app.get('/api/exercise/log', function(req, res){
+  let userId = req.userId;
+  let from = req.from;
+  let to = req.to;
+  let limit = req.limit;
+
+  // PSUEDO:
+  // if, from, to, and limit are absent get all of the user's exercises
+});
+
+app.post('/api/getShortLink', (req, res, next) => {
+  // const { hash } = req.body;
+  console.log('hash');
+  console.log(req.body);
+  // const id = atob(hash);
+  // let shortLink = {hash: baseId, }
+  // TODO: add the host data
+  res.send(req.body);
+});
+
+app.post('/api/exercise/new-user', function(req, res, next){});
+
+app.post('/api/exercise/add', function(req, res, next){});
+
 
 app.post('/shorten', (req, res, next) => {
   console.log('Inside post req.body.url');
