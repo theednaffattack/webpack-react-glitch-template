@@ -7,6 +7,8 @@ const btoa = require('btoa');
 const chalk = require('chalk');
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
+const myNetworkInterfaces = require('./helpers/networkInterfaces')
 
 const { log } = console;
 
@@ -20,33 +22,15 @@ const connectionString = process.env.MONGO_ATLAS_CONNECTION_STRING;
 const port = process.env.PORT || 8080;
 
 // http://expressjs.com/en/starter/static-files.html
-app.use(express.static('public'));
+app.use(express.static('dist'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// CHALK AND LOGGING
-
-
-        // crayon('#ffcc00').log('old gold');
-
-        // Compose multiple styles using the chainable API
-        // log(chalk.grey.bgGreen.bold('FROM SAVE'));
-
-        log(
-          chalk
-            .bgHex('#89CFF0')
-            .hex('#36454F')
-            .bold('\n      FROM SAVE    \n')
-        );
-
-// CHALK AND LOGGING
 
 // ROUTES
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function(request, response) {
-  response.sendFile(__dirname + '/app/index.html');
+  response.sendFile(path.resolve(__dirname + '/../dist/index.html'));
 });
-
 
 app.post('/api/getShortLink', (req, res, next) => {
   // const { hash } = req.body;
@@ -69,7 +53,6 @@ app.get('/:hash', (req, res) => {
     }
   });
 });
-// app.listen(port, () => console.log(`Listening on port ${objCatcher[Object.keys(objCatcher)[0]]}/${port}!`));
 
 app.post('/shorten', (req, res, next) => {
   console.log('Inside post req.body.url');
@@ -126,13 +109,22 @@ app.post('/shorten', (req, res, next) => {
   });
 });
 
-// ROUTES
+var network = require('network');
+ 
 
+// ROUTES
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+  log(
+  chalk
+    .bgHex('#FFCC00')
+    .hex('#36454F')
+    .bold(`              Your app is listening at http://${myNetworkInterfaces[0].address}:${port}              `)
+);
 });
 
+// connect to mongoose
+// the `dbName` below is essential, the db in the connection string is now ignored
 const db = mongoose.connect(
   connectionString,
   {
@@ -143,13 +135,10 @@ const db = mongoose.connect(
 
 db.then(
   (database) => {
-    console.log("we're connected!");
-
-    console.log(connectionString);
-    
+    console.log("we're connected to mongoDB!");    
   },
   (err) => {
-    console.error(`stuff ${err}`);
+    console.error(err);
   }
 ).catch((err) => {
   console.error(err);

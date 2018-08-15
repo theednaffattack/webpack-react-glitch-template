@@ -29,6 +29,7 @@
     "btoa": "^1.2.1",
     "dotenv": "^6.0.0",
     "mongoose": "^5.2.8",
+    "network": "^0.4.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "styled-components": "^3.4.2"
