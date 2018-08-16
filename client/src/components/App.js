@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Position} from 'rebass';
 
 import '../styles/App.css'
 import Home from './Home'
@@ -26,7 +27,11 @@ class App extends Component {
   render() {
     return(
       <div>
-        <nav>
+        <Position
+          p={3}
+          bg='#eee'
+          position='relative'>
+
           <NavLink to="/">Home</NavLink>
           {' '}
           <NavLink to="dashboard">Dashboard</NavLink>
@@ -37,6 +42,8 @@ class App extends Component {
           {' '}
           <NavLink to="api/exercises/add">Add Exercise</NavLink>
           {/* {props.children} */}
+        </Position>
+        <nav>
         </nav>
         <Router>
           <Home path="/" />
