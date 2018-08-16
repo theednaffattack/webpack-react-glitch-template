@@ -3,17 +3,17 @@ import React from "react";
 // import Logo from "./Logo";
 // import { Router, Link } from "@reach/router";
 
-import styled from 'styled-components'
+import styled from "styled-components";
 
 const StyledH1 = styled.h1`
   color: green;
 `;
 
-const Exercise = (props) => (
+const Exercise = props => (
   <div>
-    <StyledH1>Exercise Dashboard </ StyledH1>
+    <StyledH1>Exercise Dashboard </StyledH1>
     <p>And I'm the child Component `Exercise`</p>
-    {props.newUser}
+    {JSON.stringify(props, null, 2)}
   </div>
 );
 
