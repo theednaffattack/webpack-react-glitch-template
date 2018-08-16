@@ -28,9 +28,21 @@ app.use(bodyParser.json());
 
 // ROUTES
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function(request, response) {
-  response.sendFile(path.resolve(__dirname + '/../dist/index.html'));
+app.get("/*", function(request, response) {
+  response.sendFile(path.resolve(__dirname + '/../dist/index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err)
+    }
+  });
 });
+
+// app.get('/*', function(req, res) {
+//   res.sendFile(path.resolve(__dirname, 'path/to/your/index.html'), function(err) {
+//     if (err) {
+//       res.status(500).send(err)
+//     }
+//   })
+// })
 
 app.get('/:hash', (req, res) => {
   const baseId = req.params.hash;
