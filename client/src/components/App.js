@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
 import {Position} from 'rebass';
+import posed, { PoseGroup } from 'react-pose';
 
 import '../styles/App.css'
 import Home from './Home'
 import Dashboard from './Dashboard'
 import Exercises from './Exercises'
 import Exercise from './Exercise'
-import { Router, Link } from "@reach/router";
+import { Router, Link, Location } from "@reach/router";
+
+const RouteContainer = posed.div({
+  enter: {opacity: 1, delay: 300, beforeChildren: true},
+  exit: {opacity: 0}
+});
+
+const PosedRouter = ({ children }) => (
+  <Location>
+    {({ location }) => (
+    <PoseGroup>
+      <RouteContainer key={location.key}>
+        <Router location={location}>{children}</Router>
+      </RouteContainer>
+    </PoseGroup>
+    )}
+  </Location> 
+);
 
 const NavLink = props => (
   <Link
@@ -27,7 +45,7 @@ class App extends Component {
   render() {
     return(
       <div>
-        <Position
+        <div
           p={3}
           bg='#eee'
           position='relative'>
@@ -42,14 +60,16 @@ class App extends Component {
           {' '}
           <NavLink to="api/exercises/add">Add Exercise</NavLink>
           {/* {props.children} */}
-        </Position>
+        </div>
         <nav>
         </nav>
-        <Router>
+        {/* <Router> */}
+        <PosedRouter>
           <Home path="/" />
           <Dashboard path="dashboard" />
           <Exercise path="api/exercises/:newUser" />
-        </Router>
+        </PosedRouter>
+        {/* </Router> */}
       </div>
     );
   }
