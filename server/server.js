@@ -1,28 +1,27 @@
 // server.js
 
 // init project
-const atob = require('atob');
-const bodyParser = require('body-parser');
-const btoa = require('btoa');
-const chalk = require('chalk');
-const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const myNetworkInterfaces = require('./helpers/networkInterfaces')
+const atob = require("atob");
+const bodyParser = require("body-parser");
+const btoa = require("btoa");
+const chalk = require("chalk");
+const express = require("express");
+const mongoose = require("mongoose");
+const path = require("path");
+const myNetworkInterfaces = require("./helpers/networkInterfaces");
 
 const { log } = console;
 
-const { Url } = require('./models/Url');
+const { Url } = require("./models/Url");
 
 const app = express();
-
 
 const connectionString = process.env.MONGO_ATLAS_CONNECTION_STRING;
 
 const port = process.env.PORT || 8080;
 
 // http://expressjs.com/en/starter/static-files.html
-app.use(express.static('dist'));
+app.use(express.static("dist"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -51,12 +50,12 @@ app.get('/:hash', (req, res) => {
     if (doc) {
       res.redirect(doc.url);
     } else {
-      res.redirect('/');
+      res.redirect("/");
     }
   });
 });
 
-app.get('/api/exercise/log', function(req, res){
+app.get("/api/exercise/log", function(req, res) {
   let userId = req.userId;
   let from = req.from;
   let to = req.to;
@@ -66,9 +65,9 @@ app.get('/api/exercise/log', function(req, res){
   // if, from, to, and limit are absent get all of the user's exercises
 });
 
-app.post('/api/getShortLink', (req, res, next) => {
+app.post("/api/getShortLink", (req, res, next) => {
   // const { hash } = req.body;
-  console.log('hash');
+  console.log("hash");
   console.log(req.body);
   // const id = atob(hash);
   // let shortLink = {hash: baseId, }
@@ -76,32 +75,31 @@ app.post('/api/getShortLink', (req, res, next) => {
   res.send(req.body);
 });
 
-app.post('/api/exercise/new-user', function(req, res, next){});
+app.post("/api/exercise/new-user", function(req, res, next) {});
 
-app.post('/api/exercise/add', function(req, res, next){});
+app.post("/api/exercise/add", function(req, res, next) {});
 
-
-app.post('/shorten', (req, res, next) => {
-  console.log('Inside post req.body.url');
+app.post("/shorten", (req, res, next) => {
+  console.log("Inside post req.body.url");
   console.log(req.body);
   const urlData = req.body.url;
   Url.findOne({ url: urlData }, (err, doc) => {
     if (doc) {
-      console.log('entry found in db');
+      console.log("entry found in db");
       console.log({
         url: urlData,
         hash: btoa(doc._id),
         status: 200,
-        statusTxt: 'OK'
+        statusTxt: "OK"
       });
       res.send({
         url: urlData,
         hash: btoa(doc._id),
         status: 200,
-        statusTxt: 'OK'
+        statusTxt: "OK"
       });
     } else {
-      console.log('entry NOT found in db, saving new');
+      console.log("entry NOT found in db, saving new");
       const stringUrl = urlData.toString();
       const url = new Url({
         url: stringUrl
@@ -116,38 +114,41 @@ app.post('/shorten', (req, res, next) => {
 
         log(
           chalk
-            .bgHex('#89CFF0')
-            .hex('#36454F')
-            .bold('\n      FROM SAVE    \n')
+            .bgHex("#89CFF0")
+            .hex("#36454F")
+            .bold("\n      FROM SAVE    \n")
         );
-        console.log('url._id');
+        console.log("url._id");
         console.log(url._id);
-        console.log('btoa');
+        console.log("btoa");
         console.log(btoa(url._id));
         if (err) console.error(err);
         res.send({
           url: urlData,
           hash: btoa(url._id),
           status: 200,
-          statusTxt: 'OK'
+          statusTxt: "OK"
         });
       });
     }
   });
 });
 
-var network = require('network');
- 
+var network = require("network");
 
 // ROUTES
 // listen for requests :)
-const listener = app.listen(process.env.PORT, function () {
+const listener = app.listen(process.env.PORT, function() {
   log(
-  chalk
-    .bgHex('#FFCC00')
-    .hex('#36454F')
-    .bold(`              Your app is listening at http://${myNetworkInterfaces[0].address}:${port}              `)
-);
+    chalk
+      .bgHex("#FFCC00")
+      .hex("#36454F")
+      .bold(
+        `              Your app is listening at http://${
+          myNetworkInterfaces[0].address
+        }:${port}              `
+      )
+  );
 });
 
 // connect to mongoose
@@ -156,17 +157,17 @@ const db = mongoose.connect(
   connectionString,
   {
     useNewUrlParser: true,
-    dbName: 'test'
+    dbName: "test"
   }
 );
 
 db.then(
-  (database) => {
-    console.log("we're connected to mongoDB!");    
+  database => {
+    console.log("we're connected to mongoDB!");
   },
-  (err) => {
+  err => {
     console.error(err);
   }
-).catch((err) => {
+).catch(err => {
   console.error(err);
 });
