@@ -1,12 +1,14 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+const Exercise = require("./server/models/Exercise");
+
 module.exports = {
   entry: "./client/src/index.js",
   output: {
-    path: path.join(__dirname, '/dist'),
-    filename: 'index_bundle.js',
-    publicPath: '/'
+    path: path.join(__dirname, "/dist"),
+    filename: "index_bundle.js",
+    publicPath: "/"
   },
   module: {
     rules: [
@@ -24,7 +26,7 @@ module.exports = {
     ]
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: true
   },
   plugins: [
     new HtmlWebpackPlugin({

@@ -5,6 +5,7 @@ const atob = require("atob");
 const bodyParser = require("body-parser");
 const btoa = require("btoa");
 const chalk = require("chalk");
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -12,7 +13,41 @@ const myNetworkInterfaces = require("./helpers/networkInterfaces");
 
 const { log } = console;
 
-const { Url } = require("./models/Url");
+const bottomLabel = log(
+  chalk
+    .bgHex("#89CFF0")
+    .hex("#36454F")
+    .bold("\n   👍🏾   inside POST /api/exercises/add   👍🏾  \n")
+);
+
+const whitelist = [
+  "http://localhost:7070",
+  "http://evil.com/",
+  "http://192.168.180.160:7070",
+  "http://192.168.180.248:7070"
+];
+const corsOptions = {
+  origin(origin, callback) {
+    if (origin) {
+      if (whitelist.indexOf(origin) !== -1) {
+        console.log("origin");
+        console.log(origin);
+        callback(null, true);
+      } else {
+        console.log("not reading whitelist??????");
+        console.log(origin);
+        callback(null, true);
+
+        // callback(new Error("Not allowed by CORS"));
+      }
+    } else {
+      callback(new Error("Can't detect Origin!!!"));
+    }
+  },
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+const { Exercise } = require("./models/Exercise");
 
 const app = express();
 
@@ -21,6 +56,7 @@ const connectionString = process.env.MONGO_ATLAS_CONNECTION_STRING;
 const port = process.env.PORT || 8080;
 
 // http://expressjs.com/en/starter/static-files.html
+app.use(cors(corsOptions));
 app.use(express.static("dist"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -28,9 +64,11 @@ app.use(bodyParser.json());
 // ROUTES
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/*", function(request, response) {
-  response.sendFile(path.resolve(__dirname + '/../dist/index.html'), function(err) {
+  response.sendFile(path.resolve(__dirname + "/../dist/index.html"), function(
+    err
+  ) {
     if (err) {
-      res.status(500).send(err)
+      res.status(500).send(err);
     }
   });
 });
@@ -43,10 +81,10 @@ app.get("/*", function(request, response) {
 //   })
 // })
 
-app.get('/:hash', (req, res) => {
+app.get("/:hash", (req, res) => {
   const baseId = req.params.hash;
   const id = atob(baseId);
-  Url.findOne({ _id: id }, (err, doc) => {
+  Exercise.findOne({ _id: id }, (err, doc) => {
     if (doc) {
       res.redirect(doc.url);
     } else {
@@ -75,9 +113,61 @@ app.post("/api/getShortLink", (req, res, next) => {
   res.send(req.body);
 });
 
-app.post("/api/exercise/new-user", function(req, res, next) {});
+app.post("/api/exercises/new-user", function(req, res, next) {});
 
-app.post("/api/exercise/add", function(req, res, next) {});
+app.post("/api/exercises/add", function(req, res, next) {
+  log(
+    chalk
+      .bgHex("#89CFF0")
+      .hex("#36454F")
+      .bold("\n   👍🏾   inside POST /api/exercises/add   👍🏾  \n")
+  );
+  log(req.body);
+
+  let { userId, date, description, duration } = req.body;
+
+  const exercise = new Exercise({
+    userId,
+    date,
+    description,
+    duration
+  });
+  exercise.save(err => {
+    // Use any CSS color name
+
+    // crayon('#ffcc00').log('old gold');
+
+    // Compose multiple styles using the chainable API
+    // log(chalk.grey.bgGreen.bold('FROM SAVE'));
+
+    log(
+      chalk
+        .bgHex("#89CFF0")
+        .hex("#36454F")
+        .bold("\n      SAVING EXERCISE    \n")
+    );
+    // guard-if statement to block execution if an error is detected
+    if (err) return console.error(err);
+
+    // otherwise log it on the console and respond
+    log("saving \n", {
+      userId,
+      date,
+      description,
+      duration,
+      status: 200,
+      statusTxt: "OK"
+    });
+    res.send({
+      userId,
+      date,
+      description,
+      duration,
+      status: 200,
+      statusTxt: "OK"
+    });
+  });
+});
 
 app.post("/shorten", (req, res, next) => {
   console.log("Inside post req.body.url");
