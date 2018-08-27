@@ -48,6 +48,7 @@ const corsOptions = {
 };
 
 const { Exercise } = require("./models/Exercise");
+const { ExerciseUser } = require("./models/ExerciseUser");
 
 const app = express();
 
@@ -113,9 +114,63 @@ app.post("/api/getShortLink", (req, res, next) => {
   res.send(req.body);
 });
 
-app.post("/api/exercises/new-user", function(req, res, next) {});
+app.post("/api/exercise/new-user", function(req, res, next) {
+  log(
+    chalk
+      .bgHex("#89CFF0")
+      .hex("#36454F")
+      .bold("\n   👍🏾   inside POST /api/exercises/new-user   👍🏾  \n")
+  );
+  log(req.body);
 
-app.post("/api/exercises/add", function(req, res, next) {
+  let { username } = req.body;
+
+  const exerciseUser = new ExerciseUser({
+    username
+  });
+  exerciseUser.save((err, doc) => {
+    // Use any CSS color name
+
+    // crayon('#ffcc00').log('old gold');
+
+    // Compose multiple styles using the chainable API
+    // log(chalk.grey.bgGreen.bold('FROM SAVE'));
+
+    log(
+      chalk
+        .bgHex("#89CFF0")
+        .hex("#36454F")
+        .bold("\n      SAVING EXERCISE    \n")
+    );
+    // guard-if statement to block execution if an error is detected
+    if (err) return console.error(err);
+
+    let { username: usernameFromResponse, _id: userId } = doc;
+
+    // log the doc returned from mongo?
+    log(
+      chalk
+        .bgHex("#89CFF0")
+        .hex("#36454F")
+        .bold("\n      FROM MONGO: USER    \n" + JSON.stringify(doc, null, 2))
+    );
+
+    // otherwise log it on the console and respond
+    log("saving \n", {
+      username,
+      status: 200,
+      statusTxt: "OK"
+    });
+    res.send({
+      usernameFromResponse,
+      userId,
+      status: 200,
+      statusTxt: "OK"
+    });
+  });
+});
+
+app.post("/api/exercise/add", function(req, res, next) {
   log(
     chalk
       .bgHex("#89CFF0")

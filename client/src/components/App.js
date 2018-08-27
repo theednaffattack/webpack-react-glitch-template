@@ -9,7 +9,8 @@ import "../styles/App.css";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Exercises from "./Exercises";
-import Exercise from "./Exercise";
+import AddExercise from "./AddExercise";
+import AddUser from "./AddUser";
 
 injectGlobal`
   * { box-sizing: border-box; }
@@ -71,8 +72,8 @@ class App extends Component {
             <PosedRouter>
               <Home path="/" />
               <Dashboard path="dashboard" />
-              <Exercise path="api/exercises/add" />
-              <Exercise path="api/exercises/newUser" />
+              <AddExercise path="api/exercises/add" />
+              <AddUser path="api/exercises/newUser" />
             </PosedRouter>
           </Box>
         </Flex>

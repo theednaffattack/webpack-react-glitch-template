@@ -1,5 +1,5 @@
 import React from "react";
-import UrlForm from "./UrlForm";
+import AddExerciseForm from "./AddExerciseForm";
 import postData from "../dangerousPost";
 
 class ExerciseForm extends React.Component {
@@ -37,7 +37,7 @@ class ExerciseForm extends React.Component {
           <div className="coroner-message">
             {this.state.hash ? this.state.hash : ""}
           </div>
-          <UrlForm hash={hash} postHash={postData} />
+          <AddExerciseForm hash={hash} postHash={postData} />
         </div>
       </div>
     );

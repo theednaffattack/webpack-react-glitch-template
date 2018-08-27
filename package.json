@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --mode production && node  -r dotenv/config server/server.js",
+    "dev": "webpack --mode production && nodemon  -r dotenv/config server/server.js",
     "build": "webpack --mode production",
-    "dev": "webpack-dev-server --mode development --open --hot"
+    "pack-dev": "webpack-dev-server --mode development --open --hot"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "formik": "1.0.3",
     "mongoose": "^5.2.8",
     "network": "^0.4.1",
+    "nodemon": "1.18.3",
     "popmotion-pose": "^3.0.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",

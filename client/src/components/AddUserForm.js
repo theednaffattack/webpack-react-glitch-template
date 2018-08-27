@@ -113,83 +113,22 @@ const UriForm = props => {
         <div>
           {/* <StyledInputLabel htmlFor="userId">User ID</StyledInputLabel> */}
           <StyledInput
-            name="userId"
+            name="username"
             type="text"
-            className={`form-control ${errors.userId &&
+            className={`form-control ${errors.username &&
               touched.userId &&
               "is-invalid"}`}
-            value={values.userId || ""}
-            placeholder="User ID"
+            value={values.username || ""}
+            placeholder="Username"
             onChange={handleChange}
           />
           <div>{values.hash}</div>
-          {errors.userId &&
-            touched.userId && (
-              <div className="invalid-feedback">{errors.userId}</div>
+          {errors.username &&
+            touched.username && (
+              <div className="invalid-feedback">{errors.username}</div>
             )}
         </div>
 
-        <Flex flexWrap="wrap" mx={-2}>
-          <Box px={2} py={2} width={1}>
-            {/* <StyledInputLabel htmlFor="description">
-              Description
-            </StyledInputLabel> */}
-            <StyledInput
-              name="description"
-              type="text"
-              className={`form-control ${errors.description &&
-                touched.description &&
-                "is-invalid"}`}
-              value={values.description || ""}
-              placeholder="Description"
-              onChange={handleChange}
-            />
-            <div>{values.hash}</div>
-            {errors.description &&
-              touched.description && (
-                <div className="invalid-feedback">{errors.description}</div>
-              )}
-          </Box>
-        </Flex>
-        {/* <div>
-        </div> */}
-
-        <div>
-          {/* <StyledInputLabel htmlFor="description">Duration</StyledInputLabel> */}
-          <StyledInput
-            name="duration"
-            type="text"
-            className={`form-control ${errors.duration &&
-              touched.duration &&
-              "is-invalid"}`}
-            value={values.duration || ""}
-            placeholder="Duration (mins)"
-            onChange={handleChange}
-          />
-          <div>{values.hash}</div>
-          {errors.duration &&
-            touched.duration && (
-              <div className="invalid-feedback">{errors.duration}</div>
-            )}
-        </div>
-        <div>
-          {/* <StyledInputLabel htmlFor="description">Date</StyledInputLabel> */}
-          <StyledInput
-            name="date"
-            type="date"
-            className={`form-control ${errors.date &&
-              touched.date &&
-              "is-invalid"}`}
-            value={values.date || ""}
-            placeholder="Date"
-            onChange={handleChange}
-          />
-          <div>{values.hash}</div>
-          {errors.date &&
-            touched.date && (
-              <div className="invalid-feedback">{errors.date}</div>
-            )}
-        </div>
         {/* <SubmitButton type="submit">
           {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
         </SubmitButton> */}
@@ -238,7 +177,7 @@ export default withFormik({
   ) => {
     console.log("handleSubmit");
     console.log(JSON.stringify(values));
-    postData("/api/exercises/add", values)
+    postData("/api/exercise/new-user", values)
       // postData('http://192.168.180.162:8080/shorten', values)
       .then(data => {
         // postData('http://192.168.180.248:8080/api/getShortLink', { hash: e.target.value })
