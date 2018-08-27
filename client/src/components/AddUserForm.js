@@ -140,10 +140,18 @@ const UriForm = props => {
       <h1>Returned Data</h1>
       <h4>
         {JSON.stringify(props, null, 2)}
-        {window ? JSON.stringify("===WINDOW===", window.location, null, 2) : ""}
+        <p>
+          {window
+            ? JSON.stringify("===WINDOW===", window.location, null, 2)
+            : ""}
+        </p>
         {status ? (
-          <a href={`/api/exercise/log?${status.userId}`}>
-            {`${window.location.origin}/api/exercise/log?${status.userId}`}
+          <a href={`/api/exercise/log?${status.username}`}>
+            {`${window.location.origin}/api/exercise/log?${JSON.stringify(
+              status,
+              null,
+              2
+            )}`}
           </a>
         ) : (
           "ksdfjksadjfk"
@@ -195,10 +203,10 @@ export default withFormik({
             );
           };
         }
-        setStatus(data);
         console.log(`state in 'then' ${JSON.stringify(data)}`);
         console.log(data);
         resetForm({});
+        setStatus(data);
         // if (data == { errors: { msg: error } })
       }) // JSON from `response.json()` call
       .catch(error => console.error(error));
