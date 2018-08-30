@@ -1,25 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { Box, Flex, Heading, Position, Provider } from "rebass";
+import posed, { PoseGroup } from "react-pose";
+import { Router, Link, Location } from "@reach/router";
+import { injectGlobal, styled } from "styled-components";
 
-import '../styles/App.css'
-import Home from './Home'
-import Dashboard from './Dashboard'
-import Exercises from './Exercises'
-import Exercise from './Exercise'
-import { Router, Link } from "@reach/router";
-import {
-  Provider,
-  Container,
-  Heading,
-  Blockquote,
-  Toolbar,
-  // NavLink,
-  Flex,
-  Box
-} from 'rebass';
+import theme from "../styles/theme";
+import "../styles/App.css";
+import Home from "./Home";
+import Dashboard from "./Dashboard";
+import Exercises from "./Exercises";
+import AddExercise from "./AddExercise";
+import AddUser from "./AddUser";
+
+injectGlobal`
+  * { box-sizing: border-box; }
+  body { margin: 0;
+    height: 100vh; }
+  #root {
+    height: 100vh;
+  }
+`;
+
+const RouteContainer = posed.div({
+  enter: { opacity: 1, delay: 300, beforeChildren: true },
+  exit: { opacity: 0 }
+});
+
+const PosedRouter = ({ children }) => (
+  <Location>
+    {({ location }) => (
+      <PoseGroup>
+        <RouteContainer key={location.key}>
+          <Router location={location}>{children}</Router>
+        </RouteContainer>
+      </PoseGroup>
+    )}
+  </Location>
+);
 
 const NavLink = props => (
   <Link
-  {...props}
+    {...props}
     getProps={({ isCurrent }) => {
       // the object returned here is passed to the
       // anchor element's props
@@ -34,62 +55,31 @@ const NavLink = props => (
 
 class App extends Component {
   render() {
-    return(
-      
-
-    <Provider>
-    <Heading is='h1' children='Next.js + Rebass' mb={3}  />
-
-    <Container>
-      <Toolbar bg='black'>
-          <NavLink to="/">Home</NavLink>
-          {' '}
-          <NavLink to="dashboard">Dashboard</NavLink>
-          {' '}
-          <NavLink to="api/exercise">Exercise</NavLink>
-          {' '}
-          <NavLink to="api/exercises/newUser">User{' '}</NavLink>
-          {' '}
-          <NavLink to="api/exercises/add">Add Exercise</NavLink>
-          {/* {props.children} */}
-      </Toolbar>
-
-      <Flex justify='center'>
-        <Box width={1 / 2}>
-          <Blockquote fontSize={3} py={4}>
-            "Next.js is a minimalistic framework for server-rendered React applications."
-          </Blockquote>
-        </Box>
-        <Box width={6 / 12}>
-          <Blockquote fontSize={3} py={4}>
-            "Functional React UI component library, built with styled-components"
-          </Blockquote>
-        </Box>
-      </Flex>
-    </Container>
-  </Provider>
+    return (
+      <Provider theme={theme}>
+        <Flex bg="violet" m={0}>
+          <Box flex={1} color="text" bg="violet">
+            <Box flex={1} color="text" bg="gray">
+              <Heading>Exercise Tracke</Heading>
+              {/* <nav p={3} bg="#eee" position="relative"> */}
+              <NavLink to="/">Home</NavLink>{" "}
+              <NavLink to="dashboard">Dashboard</NavLink>{" "}
+              <NavLink to="api/exercise">Exercise</NavLink>{" "}
+              <NavLink to="api/exercises/newUser">User</NavLink>{" "}
+              <NavLink to="api/exercises/add">Add Exercise</NavLink>
+            </Box>
+            {/* </nav> */}
+            <PosedRouter>
+              <Home path="/" />
+              <Dashboard path="dashboard" />
+              <AddExercise path="api/exercises/add" />
+              <AddUser path="api/exercises/newUser" />
+            </PosedRouter>
+          </Box>
+        </Flex>
+      </Provider>
     );
   }
 }
 
 export default App;
-
-{/* <div>
-        <nav>
-          <NavLink to="/">Home</NavLink>
-          {' '}
-          <NavLink to="dashboard">Dashboard</NavLink>
-          {' '}
-          <NavLink to="api/exercise">Exercise</NavLink>
-          {' '}
-          <NavLink to="api/exercises/newUser">User</NavLink>
-          {' '}
-          <NavLink to="api/exercises/add">Add Exercise</NavLink>
-         
-        </nav>
-        <Router>
-          <Home path="/" />
-          <Dashboard path="dashboard" />
-          <Exercise path="api/exercises/:newUser" />
-        </Router>
-      </div> */}
