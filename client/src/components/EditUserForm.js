@@ -331,6 +331,7 @@ class EditUserFormAgain extends React.Component{
         <Flex>
           <Box width={theBreaks}>
             <AnimatedMulti
+              name="orgUnit"
               onChange={setFieldValue}
               onBlur={setFieldTouched}
               error={errors.topics}
@@ -339,8 +340,8 @@ class EditUserFormAgain extends React.Component{
               colourOptions={orgUnitPathOptions}
               isMulti={false}
               defaultValues={{
-                "value": values.orgUnitPath,
-                "label": values.orgUnitPath ? values.orgUnitPath.replace("/","") : "",
+                "value": orgUnitPathOptions[1].value,
+                "label": orgUnitPathOptions[1].label,
                 "color": "#00B8D9",
                 "isFixed": true
               }}

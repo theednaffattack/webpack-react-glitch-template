@@ -1,16 +1,17 @@
 import React from "react";
-import { Box, ButtonOutline as Btn, Flex, Text } from "rebass";
+import { Block, Box, ButtonOutline as Btn, Flex, Text } from "rebass";
 import * as Yup from "yup";
 import styled from "styled-components";
-import { withFormik } from "formik";
+import { withFormik, Field } from "formik";
 import DisplayFormikState from "./DisplayFormikState";
-import Checkbox from "rc-checkbox";
+import RcCheckbox from "rc-checkbox";
+import { Checkbox, CheckboxGroup } from 'accessible-react-checkbox-group';
 import StyledCheckbox from './StyledCheckbox';
 import 'rc-checkbox/assets/index.css';
 import '../styles/rc-Checkbox.css'
 // import DisplayStatusData from "./DisplayStatusData";
 import AnimatedMulti from "./AnimatedSelect";
-import { orgUnitPathOptions } from "../data/data";
+import { groups, orgUnitPathOptions } from "../data/data";
 
 const postData = (url = "", data = {}) =>
   fetch(url, {
@@ -97,7 +98,7 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledCheck = styled(Checkbox)`
+const StyledCheck = styled(RcCheckbox)`
     appearance:none;
     width:30px;
     height:30px;
@@ -117,6 +118,39 @@ const StyledInputLabel = styled.label`
 const ErrorLabel = styled.span`
   display: inline-block;
 `;
+
+// from: https://codesandbox.io/s/328038x19q
+function DemoCheckbox(props) {
+  // console.log(props)
+  return (
+    <Field name={props.name}>
+      {({ field, form }) => (
+        <label>
+          <input
+            type="checkbox"
+            {...props}
+            onChange={props.onChange}
+            checked={groups.map(x => x.label).includes(props.value)}
+            value={props.value}
+            // onChange={() => {
+            //   if (field.value.includes(props.value)) {
+            //     const nextValue = field.value.filter(
+            //       value => value !== props.value
+            //     );
+            //     form.setFieldValue(props.name, nextValue);
+            //   } else {
+            //     const nextValue = field.value.concat(props.value);
+            //     form.setFieldValue(props.name, nextValue);
+            //   }
+            // }}
+          />
+          { props.label }
+        </label>
+      )}
+    </Field>
+  );
+}
+
 
 const UriForm = props => {
   const {
@@ -179,15 +213,16 @@ style={}
               // disabled={values.}
               /> */}
               <StyledCheck
+              name="groups"
                 defaultChecked
-                onChange={onCheckboxChange}
+                onChange={handleChange}
                 value={values.groups ? values.groups[0] : ""}
               />
-              <StyledCheckbox
+              {/* <StyledCheckbox
               checked={true}
                 defaultChecked
                 onChange={onCheckboxChange}
-                value={"test"} />
+                value={"test"} /> */}
               Forgot to label this</label>
           <div>{values.hash}</div>
           {errors.orgUnitPath &&
@@ -196,7 +231,32 @@ style={}
             )}
             </Box>
             </Flex>
+            <Flex>
+              <Box>
 
+              <CheckboxGroup
+                name="groups"
+                checkedValues={[groups[2]["label"],groups[1]["label"]]}
+                onChange={handleChange}>
+        
+                <Checkbox value={values.groups}/> {groups[0]["label"]}
+                <Checkbox value={groups[1]["label"]}/> {groups[1]["label"]}
+                <Checkbox value={groups[2]["label"]}/> {groups[2]["label"]}
+              </CheckboxGroup>
+          <div>{values.hash}</div>
+          {errors.orgUnitPath &&
+            touched.orgUnitPath && (
+              <div className="invalid-feedback">{errors.orgUnitPath}</div>
+            )}
+              </Box>
+            </Flex>
+<Flex>
+  <Box>
+
+            <DemoCheckbox name="demoGroups" onChange={setFieldValue} value={groups[0].label} label={groups[0].label} /> 
+            <DemoCheckbox name="demoGroups" onChange={setFieldValue} value={groups[1].label} label={groups[1].label} />
+  </Box>
+</Flex>
         {/* <SubmitButton type="submit">
           {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
         </SubmitButton> */}
