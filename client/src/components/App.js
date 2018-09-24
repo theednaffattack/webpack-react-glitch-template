@@ -9,8 +9,11 @@ import "../styles/App.css";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Exercises from "./Exercises";
+import Users from "./Users";
 import AddExercise from "./AddExercise";
+import AddUsers from "./AddExercise";
 import AddUser from "./AddUser";
+import EditUser from "./EditUser";
 
 injectGlobal`
   * { box-sizing: border-box; }
@@ -60,20 +63,24 @@ class App extends Component {
         <Flex bg="violet" m={0}>
           <Box flex={1} color="text" bg="violet">
             <Box flex={1} color="text" bg="gray">
-              <Heading>Exercise Tracke</Heading>
+              <Heading>bunraku</Heading>
               {/* <nav p={3} bg="#eee" position="relative"> */}
               <NavLink to="/">Home</NavLink>{" "}
               <NavLink to="dashboard">Dashboard</NavLink>{" "}
-              <NavLink to="api/exercise">Exercise</NavLink>{" "}
+              <NavLink to="api/users">Users</NavLink>{" "}
+              <NavLink to="api/users/newUser">Add User</NavLink>{" "}
+              <NavLink to="api/users/editUser">Edit User</NavLink>{" "}
+              {/* <NavLink to="api/exercise">Exercise</NavLink>{" "}
               <NavLink to="api/exercises/newUser">User</NavLink>{" "}
-              <NavLink to="api/exercises/add">Add Exercise</NavLink>
+              <NavLink to="api/exercises/add">Add Exercise</NavLink> */}
             </Box>
             {/* </nav> */}
             <PosedRouter>
               <Home path="/" />
               <Dashboard path="dashboard" />
-              <AddExercise path="api/exercises/add" />
-              <AddUser path="api/exercises/newUser" />
+              <AddUser path="api/users/add" />
+              <AddUser path="api/users/newUser" />
+              <EditUser path="api/users/editUser" />
             </PosedRouter>
           </Box>
         </Flex>

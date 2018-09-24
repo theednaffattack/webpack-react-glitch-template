@@ -22,9 +22,8 @@ const bottomLabel = log(
 
 const whitelist = [
   "http://localhost:7070",
+  "http://192.168.1.49:7070",
   "http://evil.com/",
-  "http://192.168.180.160:7070",
-  "http://192.168.180.248:7070"
 ];
 const corsOptions = {
   origin(origin, callback) {
@@ -41,7 +40,11 @@ const corsOptions = {
         // callback(new Error("Not allowed by CORS"));
       }
     } else {
-      callback(new Error("Can't detect Origin!!!"));
+      log("💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  ");
+      log("Can't detect Origin!!!");
+      // callback(new Error("Can't detect Origin!!!"));
+
+      callback(null, true);
     }
   },
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204

@@ -4,6 +4,13 @@ import * as Yup from "yup";
 import styled from "styled-components";
 import { withFormik } from "formik";
 import DisplayFormikState from "./DisplayFormikState";
+import Checkbox from "rc-checkbox";
+import StyledCheckbox from './StyledCheckbox';
+import 'rc-checkbox/assets/index.css';
+import '../styles/rc-Checkbox.css'
+// import DisplayStatusData from "./DisplayStatusData";
+import AnimatedMulti from "./AnimatedSelect";
+import { orgUnitPathOptions } from "../data/data";
 
 const postData = (url = "", data = {}) =>
   fetch(url, {
@@ -23,6 +30,9 @@ const postData = (url = "", data = {}) =>
     // .then(response => this.setState(response))
     .catch(error => ({ errors: { msg: error.message } }));
 
+
+const theBreaks = [ 3/4, 1/2, 1/2, 1/3 ];
+
 const ButtonOutline = styled(Btn)`
   background-color: transparent;
   border-color: #1000ee;
@@ -38,6 +48,10 @@ const ButtonOutline = styled(Btn)`
   }
 `;
 
+function onCheckboxChange(e) {
+  // console.log('Checkbox checked:', (e.target.checked));
+  console.log('Checkbox value:', (e.target.value));
+}
 const SubmitButton = styled.button`
   display: inline-block;
   font-weight: 400;
@@ -83,6 +97,19 @@ const StyledInput = styled.input`
   }
 `;
 
+const StyledCheck = styled(Checkbox)`
+    appearance:none;
+    width:30px;
+    height:30px;
+    background:white;
+    border-radius:5px;
+    border:2px solid #555;
+
+    &:checked {
+    background: #000;
+  }
+`;
+
 const StyledInputLabel = styled.label`
   display: block;
 `;
@@ -100,6 +127,7 @@ const UriForm = props => {
     isSubmitting,
     handleChange,
     setFieldValue,
+    setFieldTouched,
     hanldeBlur,
     handleSubmit,
     handleReset,
@@ -128,6 +156,46 @@ const UriForm = props => {
               <div className="invalid-feedback">{errors.username}</div>
             )}
         </div>
+       <Flex>
+        <Box width={theBreaks}>
+         <label htmlFor="orgUnitPath">Organizational Unit</label>
+             {/* <AnimatedMulti
+              id="orgUnitPath"
+              name="orgUnitPath"
+              onChange={setFieldValue}
+              onBlur={setFieldTouched}
+              error={errors.orgUnitPath}
+              styles={orgUnitPathOptions}
+              touched={touched.orgUnitPath}
+              colourOptions={orgUnitPathOptions}
+              isMulti={false}
+            /> */}
+<label htmlFor="">
+          {/* <Checkbox
+style={}
+              defaultChecked
+              onChange={onCheckboxChange}
+              value={values.groups ? values.groups[0] : ""}
+              // disabled={values.}
+              /> */}
+              <StyledCheck
+                defaultChecked
+                onChange={onCheckboxChange}
+                value={values.groups ? values.groups[0] : ""}
+              />
+              <StyledCheckbox
+              checked={true}
+                defaultChecked
+                onChange={onCheckboxChange}
+                value={"test"} />
+              Forgot to label this</label>
+          <div>{values.hash}</div>
+          {errors.orgUnitPath &&
+            touched.orgUnitPath && (
+              <div className="invalid-feedback">{errors.orgUnitPath}</div>
+            )}
+            </Box>
+            </Flex>
 
         {/* <SubmitButton type="submit">
           {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
@@ -158,6 +226,121 @@ const UriForm = props => {
         )}
       </h4>
     </div>
+
+
+
+    // <div>
+    //   <form onSubmit={handleSubmit}>
+    //   <Flex>
+    //     <Box width={theBreaks}>
+    //       <StyledInput
+    //         name="givenName"
+    //         type="text"
+    //         className={`${errors.givenName &&
+    //           touched.givenName &&
+    //           "is-invalid"}`}
+    //         value={values.givenName || ""}
+    //         placeholder="First Name"
+    //         onChange={handleChange}
+    //       />
+    //       <div>{values.hash}</div>
+    //       {errors.givenName &&
+    //         touched.givenName && (
+    //           <div className="invalid-feedback">{errors.givenName}</div>
+    //         )}
+    //     </Box>
+    //   </Flex>
+    //   <Flex>
+    //     <Box width={theBreaks}>
+    //       <StyledInput
+    //         name="familyName"
+    //         type="text"
+    //         className={`${errors.familyName &&
+    //           touched.familyName &&
+    //           "is-invalid"}`}
+    //         value={values.familyName || ""}
+    //         placeholder="Last Name"
+    //         onChange={handleChange}
+    //       />
+    //       <div>{values.hash}</div>
+    //       {errors.familyName &&
+    //         touched.familyName && (
+    //           <div className="invalid-feedback">{errors.familyName}</div>
+    //         )}
+    //     </Box>
+    //     </Flex>
+    //   <Flex>
+    //     <Box width={theBreaks}>
+    //       <StyledInput
+    //         name="primaryEmail"
+    //         type="text"
+    //         className={`${errors.primaryEmail &&
+    //           touched.primaryEmail &&
+    //           "is-invalid"}`}
+    //         value={values.primaryEmail || ""}
+    //         placeholder="Primary Email"
+    //         onChange={handleChange}
+    //       />
+    //       <div>{values.hash}</div>
+    //       {errors. primaryEmail &&
+    //         touched.primaryEmail && (
+    //           <div className="invalid-feedback">{errors.primaryEmail}</div>
+    //         )}
+    //     </Box>
+    //     </Flex>
+    //   <Flex>
+    //     <Box width={theBreaks}>
+    //     <label htmlFor="orgUnitPath">Organizational Unit</label>
+    //         <AnimatedMulti
+    //           id="orgUnitPath"
+    //           name="orgUnitPath"
+    //           onChange={setFieldValue}
+    //           onBlur={setFieldTouched}
+    //           error={errors.orgUnitPath}
+    //           styles={orgUnitPathOptions}
+    //           touched={touched.orgUnitPath}
+    //           colourOptions={orgUnitPathOptions}
+    //           isMulti={false}
+    //         />
+
+          
+    //       <div>{values.hash}</div>
+    //       {errors.orgUnitPath &&
+    //         touched.orgUnitPath && (
+    //           <div className="invalid-feedback">{errors.orgUnitPath}</div>
+    //         )}
+    //         </Box>
+    //         </Flex>
+    //   <Flex>
+    //     <Box width={theBreaks}>
+          
+    //       <StyledInput
+    //         name="phone"
+    //         type="phone"
+    //         className={`${errors.phone &&
+    //           touched.phone &&
+    //           "is-invalid"}`}
+    //         value={values.phone || ""}
+    //         placeholder="Phone"
+    //         onChange={handleChange}
+    //       />
+    //       <div>{values.hash}</div>
+    //       {errors. phone &&
+    //         touched.phone && (
+    //           <div className="invalid-feedback">{errors.phone}</div>
+    //         )}
+    //         </Box>
+    //         </Flex>
+
+    //     <ButtonOutline type="submit" mx={1} my={3} color="pink">
+    //       {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
+    //     </ButtonOutline>
+    //     {/* <DisplayFormikState {...props} /> */}
+    //   </form>
+    //   {/* <h1>Returned Data</h1>
+    //   <div>{status ? <DisplayStatusData status={status} /> : ""}</div> */}
+
+    // </div>
   );
 };
 
