@@ -14,6 +14,7 @@ import AddExercise from "./AddExercise";
 import AddUsers from "./AddExercise";
 import AddUser from "./AddUser";
 import EditUser from "./EditUser";
+import { DemoCheckbox } from "../example/formikCheckbox";
 
 injectGlobal`
   * { box-sizing: border-box; }
@@ -70,6 +71,7 @@ class App extends Component {
               <NavLink to="api/users">Users</NavLink>{" "}
               <NavLink to="api/users/newUser">Add User</NavLink>{" "}
               <NavLink to="api/users/editUser">Edit User</NavLink>{" "}
+              <NavLink to="api/demo">Checkbox Demo</NavLink>{" "}
               {/* <NavLink to="api/exercise">Exercise</NavLink>{" "}
               <NavLink to="api/exercises/newUser">User</NavLink>{" "}
               <NavLink to="api/exercises/add">Add Exercise</NavLink> */}
@@ -81,6 +83,7 @@ class App extends Component {
               <AddUser path="api/users/add" />
               <AddUser path="api/users/newUser" />
               <EditUser path="api/users/editUser" />
+              <DemoCheckbox path="api/demo" />
             </PosedRouter>
           </Box>
         </Flex>

@@ -11,7 +11,7 @@ import Toggle from 'react-toggle';
 import MySelect  from './MySelect';
 import "react-toggle/style.css"
 import AnimatedMulti from "./AnimatedSelect";
-import { groups, orgUnitPathOptions } from "../data/data";
+import { groupsTest, orgUnitPathOptions } from "../data/data";
 
 const postData = (url = "", data = {}) =>
   fetch(url, {
@@ -350,20 +350,20 @@ class EditUserFormAgain extends React.Component{
         </Flex>
         <Flex>
           <Box width={theBreaks}>
-            <label htmlFor="groups" >
-              Groups
+            <label htmlFor="groupsTest" >
+              groupsTest
             </label>
             <AnimatedMulti
-              name="groups"
-              value={groups[0]["value"]}
+              name="groupsTest"
+              value={groupsTest[0]["value"]}
               onChange={setFieldValue}
               onBlur={setFieldTouched}
-              error={errors.groups}
-              styles={groups}
-              touched={touched.groups}
-              colourOptions={groups}
+              error={errors.groupsTest}
+              styles={groupsTest}
+              touched={touched.groupsTest}
+              colourOptions={groupsTest}
               isMulti={true}
-              defaultValues={[{...groups[0]},{...groups[1]}]}
+              defaultValues={[{...groupsTest[0]},{...groupsTest[1]}]}
             />
           </Box>
         </Flex>
