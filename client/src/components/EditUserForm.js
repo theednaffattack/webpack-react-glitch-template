@@ -223,9 +223,6 @@ class EditUserFormAgain extends React.Component{
     status
   } = this.props;
     return(
-      // do stuff
-      <div>
-
     <div>
       <form onSubmit={handleSubmit}>
         <input
@@ -379,7 +376,6 @@ class EditUserFormAgain extends React.Component{
       </h4>
     </div>
   
-      </div>
     );
   }
 }

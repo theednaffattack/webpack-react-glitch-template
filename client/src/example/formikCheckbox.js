@@ -8,8 +8,8 @@ import Toggle from 'react-toggle';
 import MySelect  from '../components/MySelect';
 import "react-toggle/style.css"
 import AnimatedMulti from "../components/AnimatedSelect";
-import { groups, orgUnitPathOptions } from "../data/data";
-
+import { mrGroups as groups, groupsTest, orgUnitPathOptions } from "../data/data";
+import DisplayFormikState from "../components/DisplayFormikState";
 console.clear();
 
 const categories = [
@@ -174,12 +174,12 @@ const ErrorLabel = styled.span`
   display: inline-block;
 `;
 
-const theBreaks = [ 3/4, 1/2, 1/2, 1/3 ];
+const theBreaks = [ 3/4, 1/2, 1/2, 3/4 ];
 
 export const FormExample = () => (
   <div>
     <Formik
-      initialValues={{ groups: ["01jlao463vsja9a"] }}
+      initialValues={{ groups: ["01jlao463vsja9a"], inviteToSlack: true, suspended: false }}
       onSubmit={values =>
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -285,10 +285,11 @@ export const FormExample = () => (
   {values.suspended === "true" || values.suspended === true ? <Text children="Suspended" /> : <Text children="Active" />}
   </label>
               <Toggle
-                checked={values.suspended === "false" || values.suspended === false}
+                
+                defaultChecked={!values.suspended}
                 name='suspended'
                 icons={false}
-                value={values.suspended}
+                // value={values.suspended}
                 // onChange={setFieldValue}
                 onChange={handleChange}
                 onBlur={setFieldTouched}
@@ -299,24 +300,42 @@ export const FormExample = () => (
             </Flex>
           <Flex>
             <Box width={theBreaks}>
-              <AnimatedMulti
-                name="orgUnit"
-                onChange={setFieldValue}
+              {/* PUT MY STUFF HERE */}
+              <label htmlFor="inviteToSlack" >
+  {values.inviteToSlack === "true" || values.inviteToSlack === true ? <Text children="Invite to Slack" /> : <Text children="Don't Invite to Slack" />}
+  </label>
+              <Toggle
+                name='inviteToSlack'
+                icons={false}
+                defaultChecked={values.inviteToSlack}
+                // value={values.inviteToSlack}
+                // onChange={setFieldValue}
+                onChange={handleChange}
                 onBlur={setFieldTouched}
-                error={errors.topics}
-                styles={orgUnitPathOptions}
-                touched={touched.topics}
-                colourOptions={orgUnitPathOptions}
-                isMulti={false}
-                defaultValues={{
-                  "value": orgUnitPathOptions[1].value,
-                  "label": orgUnitPathOptions[1].label,
-                  "color": "#00B8D9",
-                  "isFixed": true
-                }}
+                aria-label="Invite to Slack"
               />
+  
             </Box>
-          </Flex>
+            </Flex>
+        <Flex>
+          <Box width={theBreaks}>
+            <label htmlFor="groupsTest" >
+              groupsTest
+            </label>
+            <AnimatedMulti
+              name="groupsTest"
+              value={groupsTest[0]["value"]}
+              onChange={setFieldValue}
+              onBlur={setFieldTouched}
+              error={errors.groupsTest}
+              styles={groupsTest}
+              touched={touched.groupsTest}
+              colourOptions={groupsTest}
+              isMulti={true}
+              defaultValues={[{...groupsTest[0]},{...groupsTest[1]}]}
+            />
+          </Box>
+        </Flex>
           <Flex>
             <Box width={theBreaks}>
 
@@ -368,7 +387,7 @@ export const FormExample = () => (
           <ButtonOutline type="submit" mx={1} my={3} color="palevioletred">
             {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
           </ButtonOutline> <CustomButton>Hello</CustomButton>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
+          <DisplayFormikState {...values} />
         </div>
       )}
     />
