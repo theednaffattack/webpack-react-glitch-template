@@ -30,8 +30,8 @@ const columns = [
     title: 'Email',
     dataIndex: 'id',
     key: 'id',
-    render() {
-      return <a href={link}>Edit User</a>;
+    render(text, record) {
+      return <a href={link+record.id}>Edit User {record.id} </a>;
     },
   },
 ];
