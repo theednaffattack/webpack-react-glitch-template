@@ -457,7 +457,7 @@ export const AddUserForm = ({
 
               
           <Flex key={group.name}>
-          <Box width={4/5} m={0} p={0} bg={values.groups.includes(group.id) ? 'rgba(0, 0, 0, 0.25)' : 'transparent'}>
+          <Box width={4/5} m={0} p={0} bg={values.groups.includes(group.id) ? 'rgba(255, 0, 255, 0.25)' : 'transparent'}>
 <Flex>
           <Box width={4/5} my={3}>
   <Text

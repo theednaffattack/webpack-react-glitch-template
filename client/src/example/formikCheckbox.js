@@ -190,12 +190,13 @@ export const FormExample = ({
   setFieldValue,
   setFieldTouched,
   isSubmitting,
-  resetForm
+  resetForm,
+  userId
 }) => (
   <div>
 
     <Formik
-      initialValues={{ groups: ["01jlao463vsja9a"], insertIntoEnvoy: false, inviteToSlack: true, shareCorpCal: true, suspended: false }}
+      initialValues={{ userId, groups: ["01jlao463vsja9a"], insertIntoEnvoy: false, inviteToSlack: true, shareCorpCal: true, suspended: false }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -459,9 +460,9 @@ export const FormExample = ({
   </div>
 );
 
-const DemoCheckbox = () => (
+const DemoCheckbox = (props) => (
   <div>
-    <FormExample />
+    <FormExample userId={props.userId} />
   </div>
 );
 

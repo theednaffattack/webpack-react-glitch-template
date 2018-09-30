@@ -10,11 +10,11 @@ const RoundedBanner = styled(Banner)`
 
 const EditUser = props => (
   <Box bg="blue" color="white" p={4} width={[1, 1, 1 / 2]}>
-    <Heading f={[4, 5, 6, 7]}>Edit User</Heading>
+    <Heading f={[4, 5, 6, 7]}>Edit User {props.userId}</Heading>
     <Flex flexWrap="wrap" mx={-2}>
       <Box px={2} py={2} width={[1, 1, 1]}>
         {/* <EditUserFormContainer /> */}
-        <DemoCheckbox />
+        <DemoCheckbox userId={props.userId} />
       </Box>
     </Flex>
   </Box>

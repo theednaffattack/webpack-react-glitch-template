@@ -20,6 +20,8 @@ const Users = (props) => (
 
 export default Users;
 
+const link = "/api/users/edit/";
+
 const columns = [
   { title: 'Name', dataIndex: 'fullName', key: 'fullName', width: 200 },
   { id: '123', title: 'Suspended?', dataIndex: 'suspended', key: 'suspended', width: 100 },
@@ -29,7 +31,7 @@ const columns = [
     dataIndex: 'id',
     key: 'id',
     render() {
-      return <a href="/api/users/edit/${}">Edit User</a>;
+      return <a href={link}>Edit User</a>;
     },
   },
 ];

@@ -82,7 +82,8 @@ class App extends Component {
               <Dashboard path="dashboard" />
               <Users path="api/users" />
               <AddUser path="api/users/newUser" />
-              <EditUser path="api/users/editUser" />
+              {/* <EditUser path="api/users/editUser" /> */}
+              <EditUser path="api/users/:userId" />
               <DemoCheckbox path="api/demo" />
             </PosedRouter>
           </Box>
