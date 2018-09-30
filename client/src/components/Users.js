@@ -29,9 +29,9 @@ const columns = [
   {
     title: 'Email',
     dataIndex: 'id',
-    key: 'id',
-    render(text, record) {
-      return <a href={link+record.id}>Edit User {record.id} </a>;
+    key: text => text,
+    render(text) {
+      return <a href={link+text}>{text}</a>;
     },
   },
 ];

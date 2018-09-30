@@ -1,7 +1,7 @@
 import React from "react";
 import { Banner, Box, Flex, Heading, Text } from "rebass";
 import styled from "styled-components";
-import { DemoCheckbox } from "../example/formikCheckbox";
+import { DemoCheckbox, SingleUserEdit } from "../example/EditUserDemo";
 import EditUserFormContainer from "./EditUserFormContainer";
 
 const RoundedBanner = styled(Banner)`
@@ -14,6 +14,7 @@ const EditUser = props => (
     <Flex flexWrap="wrap" mx={-2}>
       <Box px={2} py={2} width={[1, 1, 1]}>
         {/* <EditUserFormContainer /> */}
+        <SingleUserEdit userKey={props.userId} />
         <DemoCheckbox userId={props.userId} />
       </Box>
     </Flex>
