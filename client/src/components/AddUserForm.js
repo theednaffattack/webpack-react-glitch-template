@@ -1,47 +1,34 @@
 import React from "react";
-import { Block, Box, ButtonOutline as Btn, Flex, Text } from "rebass";
+import { Formik, Form, FieldArray } from "formik";
+import { Absolute, Box, Button, ButtonOutline as Btn, Card, Flex, Input, Label, Relative, Switch, Text } from "rebass";
 import * as Yup from "yup";
 import styled from "styled-components";
-import { withFormik, Field } from "formik";
-import DisplayFormikState from "./DisplayFormikState";
-import RcCheckbox from "rc-checkbox";
+
+import Toggle from 'react-toggle';
 import { Checkbox, CheckboxGroup } from 'accessible-react-checkbox-group';
-import StyledCheckbox from './StyledCheckbox';
-import 'rc-checkbox/assets/index.css';
-import '../styles/rc-Checkbox.css'
-// import DisplayStatusData from "./DisplayStatusData";
-import AnimatedMulti from "./AnimatedSelect";
-import { groups, orgUnitPathOptions } from "../data/data";
+import MySelect  from '../components/MySelect';
+import { GroupSelect }  from '../example/groupSelect';
 
-const postData = (url = "", data = {}) =>
-  fetch(url, {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    mode: "cors", // no-cors, cors, *same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: "same-origin", // include, same-origin, *omit
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-      // "Content-Type": "application/x-www-form-urlencoded",
-    },
-    redirect: "follow", // manual, *follow, error
-    referrer: "no-referrer", // no-referrer, *client
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
-  })
-    .then(responseText => responseText.json()) // parses response to JSON
-    // .then(response => this.setState(response))
-    .catch(error => ({ errors: { msg: error.message } }));
+import "react-toggle/style.css"
+import AnimatedMulti from "../components/AnimatedSelect";
+import { mrGroups as groups, groupsTest, orgUnitPathOptions } from "../data/data";
+import DisplayFormikState from "../components/DisplayFormikState";
+console.clear();
 
-
-const theBreaks = [ 3/4, 1/2, 1/2, 1/3 ];
+const categories = [
+  { id: "movies", name: "Movies" },
+  { id: "music", name: "Music" },
+  { id: "videoGames", name: "Video Games" }
+];
 
 const ButtonOutline = styled(Btn)`
   background-color: transparent;
-  border-color: #1000ee;
+  border-color: palevioletred;
   transition: all 0.16s ease-in-out;
   &:hover {
     color: #fff;
-    background-color: #1000ee;
-    border-color: #1000ee;
+    background-color: palevioletred;
+    border-color: palevioletred;
   }
   &:focus {
     box-shadow: rgb(0, 103, 238) 0px 0px 0px 2px;
@@ -49,10 +36,6 @@ const ButtonOutline = styled(Btn)`
   }
 `;
 
-function onCheckboxChange(e) {
-  // console.log('Checkbox checked:', (e.target.checked));
-  console.log('Checkbox value:', (e.target.value));
-}
 const SubmitButton = styled.button`
   display: inline-block;
   font-weight: 400;
@@ -77,6 +60,15 @@ const SubmitButton = styled.button`
   }
 `;
 
+
+
+const CustomButton = styled(Button)`
+  border: 1px solid rgba(0, 0, 0, .25);
+  background-color: transparent;
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, .125));
+  box-shadow: 0 0 4px rgba(0, 0, 0, .25);
+`;
+
 const StyledInput = styled.input`
   clear: both;
   width: 100%;
@@ -98,367 +90,565 @@ const StyledInput = styled.input`
   }
 `;
 
-const StyledCheck = styled(RcCheckbox)`
-    appearance:none;
-    width:30px;
-    height:30px;
-    background:white;
-    border-radius:5px;
-    border:2px solid #555;
-
-    &:checked {
-    background: #000;
-  }
-`;
-
 const StyledInputLabel = styled.label`
   display: block;
 `;
+
+// create the box that goes over the
+// checkbox
+const StyledSwitch = styled.label`
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+`;
+
+const customSelectStyles =  {
+  option: (base, state) => ({
+    ...base,
+    borderBottom: '1px dotted pink',
+    color: state.isFullscreen ? 'red' : 'blue',
+    padding: 20,
+  }),
+  control: () => ({
+    // none of react-selects styles are passed to <View />
+    width: 200,
+  }),
+  singleValue: (base, state) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+
+    return { ...base, opacity, transition };
+  }
+};
+
+const StyledSlider = styled.span`
+  /* display: none; */
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  -webkit-transition: .4s;
+  transition: .4s;
+  
+
+  &:before{
+
+  position: absolute;
+  /* display: none; */
+  content: "🦄";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  border-radius: 34px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+
+
+  }
+`;
+
 
 const ErrorLabel = styled.span`
   display: inline-block;
 `;
 
-// from: https://codesandbox.io/s/328038x19q
-function DemoCheckbox(props) {
-  // console.log(props)
-  return (
-    <Field name={props.name}>
-      {({ field, form }) => (
-        <label>
-          <input
-            type="checkbox"
-            {...props}
-            onChange={props.onChange}
-            checked={groups.map(x => x.label).includes(props.value)}
-            value={props.value}
-            // onChange={() => {
-            //   if (field.value.includes(props.value)) {
-            //     const nextValue = field.value.filter(
-            //       value => value !== props.value
-            //     );
-            //     form.setFieldValue(props.name, nextValue);
-            //   } else {
-            //     const nextValue = field.value.concat(props.value);
-            //     form.setFieldValue(props.name, nextValue);
-            //   }
-            // }}
-          />
-          { props.label }
-        </label>
-      )}
-    </Field>
-  );
-}
+const theBreaks = [ 3/4, 1/2, 1/2, 3/4 ];
 
+export const AddUserForm = ({
+  values,
+  touched,
+  dirty,
+  errors,
+  handleChange,
+  handleBlur,
+  handleSubmit,
+  handleReset,
+  setFieldValue,
+  setFieldTouched,
+  isSubmitting,
+  resetForm
+}) => (
+  <div>
 
-const UriForm = props => {
-  const {
-    values,
-    touched,
-    errors,
-    dirty,
-    isSubmitting,
-    handleChange,
-    setFieldValue,
-    setFieldTouched,
-    hanldeBlur,
-    handleSubmit,
-    handleReset,
-    hash,
-    status
-  } = props;
-
-  return (
-    <div>
-      <form className="" onSubmit={handleSubmit}>
+    <Formik
+      initialValues={{ groups: ["01jlao463vsja9a"], insertIntoEnvoy: false, inviteToSlack: true, shareCorpCal: true, suspended: false }}
+      onSubmit={(values, actions) => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+        }, 500);
+        console.log(`state in 'then' ${JSON.stringify({key: 'value'})}`);
+        actions.resetForm();
+        !actions.isSubmitting;
+      }
+      }
+      render={({ 
+        children,
+        id,
+        values,
+        touched,
+        errors,
+        dirty,
+        isSubmitting,
+        handleChange,
+        setFieldValue,
+        setFieldTouched,
+        hanldeBlur,
+        handleSubmit,
+        handleReset,
+        hash,
+        status
+      }, ...props) => (
         <div>
-          {/* <StyledInputLabel htmlFor="userId">User ID</StyledInputLabel> */}
-          <StyledInput
-            name="username"
-            type="text"
-            className={`form-control ${errors.username &&
-              touched.userId &&
-              "is-invalid"}`}
-            value={values.username || ""}
-            placeholder="Username"
-            onChange={handleChange}
-          />
-          <div>{values.hash}</div>
-          {errors.username &&
-            touched.username && (
-              <div className="invalid-feedback">{errors.username}</div>
-            )}
-        </div>
-       <Flex>
-        <Box width={theBreaks}>
-         <label htmlFor="orgUnitPath">Organizational Unit</label>
-             {/* <AnimatedMulti
-              id="orgUnitPath"
-              name="orgUnitPath"
-              onChange={setFieldValue}
-              onBlur={setFieldTouched}
-              error={errors.orgUnitPath}
-              styles={orgUnitPathOptions}
-              touched={touched.orgUnitPath}
-              colourOptions={orgUnitPathOptions}
-              isMulti={false}
-            /> */}
-<label htmlFor="">
-          {/* <Checkbox
-style={}
-              defaultChecked
-              onChange={onCheckboxChange}
-              value={values.groups ? values.groups[0] : ""}
-              // disabled={values.}
-              /> */}
-              <StyledCheck
-              name="groups"
-                defaultChecked
+
+          {/* <DisplayFormikState {...values} /> */}
+      <Form className="" onSubmit={handleSubmit}>
+          
+<Card
+  my={3}
+  p={4}
+  bg="transparent" 
+  borderRadius={8}
+  boxShadow='0 2px 16px rgba(0, 0, 0, 0.25)'>
+          <Flex>
+            <Box width={theBreaks}>
+              <StyledInput
+                name="givenName"
+                type="text"
+                className={`${errors.givenName &&
+                  touched.givenName &&
+                  "is-invalid"}`}
+                value={values.givenName || ""}
+                placeholder="First Name"
                 onChange={handleChange}
-                value={values.groups ? values.groups[0] : ""}
               />
-              {/* <StyledCheckbox
-              checked={true}
-                defaultChecked
-                onChange={onCheckboxChange}
-                value={"test"} /> */}
-              Forgot to label this</label>
-          <div>{values.hash}</div>
-          {errors.orgUnitPath &&
-            touched.orgUnitPath && (
-              <div className="invalid-feedback">{errors.orgUnitPath}</div>
-            )}
+              <div>{values.hash}</div>
+              {errors.givenName &&
+                touched.givenName && (
+                  <div className="invalid-feedback">{errors.givenName}</div>
+                )}
+            </Box>
+          </Flex>
+          <Flex>
+            <Box width={theBreaks}>
+              <StyledInput
+                name="familyName"
+                type="text"
+                className={`${errors.familyName &&
+                  touched.familyName &&
+                  "is-invalid"}`}
+                value={values.familyName || ""}
+                placeholder="Last Name"
+                onChange={handleChange}
+              />
+              <div>{values.hash}</div>
+              {errors.familyName &&
+                touched.familyName && (
+                  <div className="invalid-feedback">{errors.familyName}</div>
+                )}
             </Box>
             </Flex>
-            <Flex>
-              <Box>
+          <Flex>
+            <Box width={theBreaks}>
+              <StyledInput
+                name="primaryEmail"
+                type="text"
+                className={`${errors.primaryEmail &&
+                  touched.primaryEmail &&
+                  "is-invalid"}`}
+                value={values.primaryEmail || ""}
+                placeholder="Primary Email"
+                onChange={handleChange}
+              />
+              <div>{values.hash}</div>
+              {errors. primaryEmail &&
+                touched.primaryEmail && (
+                  <div className="invalid-feedback">{errors.primaryEmail}</div>
+                )}
+            </Box>
+            </Flex>
+          <Flex>
+            <Box width={theBreaks}>
+              <StyledInput
+                name="personalEmail"
+                type="text"
+                className={`${errors.personalEmail &&
+                  touched.personalEmail &&
+                  "is-invalid"}`}
+                value={values.personalEmail || ""}
+                placeholder="Personal Email"
+                onChange={handleChange}
+              />
+              <div>{values.hash}</div>
+              {errors. personalEmail &&
+                touched.personalEmail && (
+                  <div className="invalid-feedback">{errors.personalEmail}</div>
+                )}
+            </Box>
+            </Flex>
+            </Card>
+          {/* <Flex>
+            <Box width={theBreaks}>
+              <label htmlFor="suspended" >
+  {values.suspended === true ? <Text children="Suspended" /> : <Text children="Active" />}
+  </label>
+              <Toggle
+                // defaultChecked={!values.suspended}
+                name='suspended'
+                icons={false}
+                value={!values.suspended}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="User status"
+              />
+  
+            </Box>
+            </Flex> */}
 
-              <CheckboxGroup
-                name="groups"
-                checkedValues={[groups[2]["label"],groups[1]["label"]]}
-                onChange={handleChange}>
-        
-                <Checkbox value={values.groups}/> {groups[0]["label"]}
-                <Checkbox value={groups[1]["label"]}/> {groups[1]["label"]}
-                <Checkbox value={groups[2]["label"]}/> {groups[2]["label"]}
-              </CheckboxGroup>
-          <div>{values.hash}</div>
-          {errors.orgUnitPath &&
-            touched.orgUnitPath && (
-              <div className="invalid-feedback">{errors.orgUnitPath}</div>
-            )}
+<Card
+  my={3}
+  px={4}
+  pt={3}
+  pb={3}
+  bg="transparent" 
+  borderRadius={8}
+  boxShadow='0 2px 16px rgba(0, 0, 0, 0.25)'>
+          <Flex>
+            <Box width={1}>
+
+                <Text fontSize={[ 3, 4, 4 ]} py={2}>Services</Text>
+         
+  </Box>
+            </Flex>
+            <Flex>
+              <Box width={1} py={2}>
+
+            <StyledHr />
               </Box>
             </Flex>
-<Flex>
-  <Box>
-
-            <DemoCheckbox name="demoGroups" onChange={setFieldValue} value={groups[0].label} label={groups[0].label} /> 
-            <DemoCheckbox name="demoGroups" onChange={setFieldValue} value={groups[1].label} label={groups[1].label} />
+            <Flex>{/* PUT MY STUFF HERE */}
+            <Box width={4/5} my="auto">
+              <label htmlFor="inviteToSlack" >
+  {values.inviteToSlack === "true" || values.inviteToSlack === true ? <Text children="Invite to Slack" /> : <Text children="Don't Invite to Slack" />}
+  </label>
   </Box>
-</Flex>
-        {/* <SubmitButton type="submit">
-          {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
-        </SubmitButton> */}
-        <ButtonOutline mx={1} my={3} color="indigo">
-          {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
-        </ButtonOutline>
-        <DisplayFormikState {...props} />
-      </form>
-      <h1>Returned Data</h1>
-      <h4>
-        {JSON.stringify(props, null, 2)}
-        <p>
-          {window
-            ? JSON.stringify("===WINDOW===", window.location, null, 2)
-            : ""}
-        </p>
-        {status ? (
-          <a href={`/api/exercise/log?${status.username}`}>
-            {`${window.location.origin}/api/exercise/log?${JSON.stringify(
-              status,
-              null,
-              2
-            )}`}
-          </a>
-        ) : (
-          "ksdfjksadjfk"
-        )}
-      </h4>
-    </div>
+            <Box width={1/5} my="auto">
+              <Toggle
+                name='inviteToSlack'
+                icons={false}
+                defaultChecked={values.inviteToSlack}
+                // value={values.inviteToSlack}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="Invite to Slack"
+              />
+  
+            </Box>
+            </Flex>
+            {/* HR Row - postSlack - BEG */}
+            <Flex>
+            <Box width={1} py={2}>
+            <StyledHr />
+            </Box>
+            </Flex>
+            {/* HR Row - postSlack - END */}
+          <Flex>
+            <Box width={4/5}>
+              {/* PUT MY STUFF HERE */}
+              <label htmlFor="insertIntoEnvoy" >
+  {values.insertIntoEnvoy === "true" || values.insertIntoEnvoy === true ? <Text children="Insert into Envoy" /> : <Text children="Don't Insert into Envoy" />}
+  </label>
+  </Box>
+            <Box width={1/5} my="auto">
+              <Toggle
+                name='insertIntoEnvoy'
+                icons={false}
+                defaultChecked={values.insertIntoEnvoy}
+                // value={values.insertIntoEnvoy}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="Insert Into Envoy"
+              />
+  
+            </Box>
+            </Flex>
+            {/* HR Row - postSlack - BEG */}
+            <Flex>
+            <Box width={1} py={2}>
+            <StyledHr />
+            </Box>
+            </Flex>
+            {/* HR Row - postSlack - END */}
+          <Flex>
+            <Box width={4/5}>
+              {/* PUT MY STUFF HERE */}
+              <label htmlFor="shareCorpCal" >
+  {values.shareCorpCal === "true" || values.shareCorpCal === true ? <Text children='Share "Corp" Calendar' /> : <Text children='Do not Share "Corp" Calendar' />}
+  </label>
+  </Box>
+            <Box width={1/5} my="auto">
+              <Toggle
+                name='shareCorpCal'
+                icons={false}
+                defaultChecked={values.shareCorpCal}
+                // value={values.shareCorpCal}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="Insert Into Envoy"
+              />
+            </Box>
+            </Flex>
 
+            </Card>
+            {/* <Flex>
+          <Box width={theBreaks}>
+            <label htmlFor="groupsTest" >
+              groupsTest
+            </label>
+            <AnimatedMulti
+              name="groupsTest"
+              value={groupsTest[0]["value"]}
+              onChange={setFieldValue}
+              onBlur={setFieldTouched}
+              error={errors.groupsTest}
+              styles={groupsTest}
+              touched={touched.groupsTest}
+              colourOptions={groupsTest}
+              isMulti={true}
+              defaultValues={[{...groupsTest[0]},{...groupsTest[1]}]}
+            />
+          </Box>
+        </Flex> */}
+        {/* GROUPS CARD */}
+<Card
+  css={{
+    maxWidth: '600px'
+  }}
+  my={3}
+  px={4}
+  pt={3}
+  pb={3}
+  mx="auto"
+  bg="transparent" 
+  borderRadius={8}
+  boxShadow='0 2px 16px rgba(0, 0, 0, 0.25)'>
 
+          <Flex>
+            <Box width={1}>
+              <label htmlFor="groups" >
+                <Text fontSize={[ 3, 4, 4 ]} py={2}>M.R. Groups</Text>
+              </label>
+            <StyledHr />
+            <FieldArray
+            name="groups"
+            render={arrayHelpers => (
+              <div>
+                {groups.map(group => (
 
-    // <div>
-    //   <form onSubmit={handleSubmit}>
-    //   <Flex>
-    //     <Box width={theBreaks}>
-    //       <StyledInput
-    //         name="givenName"
-    //         type="text"
-    //         className={`${errors.givenName &&
-    //           touched.givenName &&
-    //           "is-invalid"}`}
-    //         value={values.givenName || ""}
-    //         placeholder="First Name"
-    //         onChange={handleChange}
-    //       />
-    //       <div>{values.hash}</div>
-    //       {errors.givenName &&
-    //         touched.givenName && (
-    //           <div className="invalid-feedback">{errors.givenName}</div>
-    //         )}
-    //     </Box>
-    //   </Flex>
-    //   <Flex>
-    //     <Box width={theBreaks}>
-    //       <StyledInput
-    //         name="familyName"
-    //         type="text"
-    //         className={`${errors.familyName &&
-    //           touched.familyName &&
-    //           "is-invalid"}`}
-    //         value={values.familyName || ""}
-    //         placeholder="Last Name"
-    //         onChange={handleChange}
-    //       />
-    //       <div>{values.hash}</div>
-    //       {errors.familyName &&
-    //         touched.familyName && (
-    //           <div className="invalid-feedback">{errors.familyName}</div>
-    //         )}
-    //     </Box>
-    //     </Flex>
-    //   <Flex>
-    //     <Box width={theBreaks}>
-    //       <StyledInput
-    //         name="primaryEmail"
-    //         type="text"
-    //         className={`${errors.primaryEmail &&
-    //           touched.primaryEmail &&
-    //           "is-invalid"}`}
-    //         value={values.primaryEmail || ""}
-    //         placeholder="Primary Email"
-    //         onChange={handleChange}
-    //       />
-    //       <div>{values.hash}</div>
-    //       {errors. primaryEmail &&
-    //         touched.primaryEmail && (
-    //           <div className="invalid-feedback">{errors.primaryEmail}</div>
-    //         )}
-    //     </Box>
-    //     </Flex>
-    //   <Flex>
-    //     <Box width={theBreaks}>
-    //     <label htmlFor="orgUnitPath">Organizational Unit</label>
-    //         <AnimatedMulti
-    //           id="orgUnitPath"
-    //           name="orgUnitPath"
-    //           onChange={setFieldValue}
-    //           onBlur={setFieldTouched}
-    //           error={errors.orgUnitPath}
-    //           styles={orgUnitPathOptions}
-    //           touched={touched.orgUnitPath}
-    //           colourOptions={orgUnitPathOptions}
-    //           isMulti={false}
-    //         />
+              
+          <Flex key={group.name}>
+          <Box width={4/5} m={0} p={0} bg={values.groups.includes(group.id) ? 'rgba(0, 0, 0, 0.25)' : 'transparent'}>
+<Flex>
+          <Box width={4/5} my={3}>
+  <Text
+  color='white'
+  >
+    {group.name}
+  </Text>
+  </Box>
+  <Box width={1/5} my="auto">
 
-          
-    //       <div>{values.hash}</div>
-    //       {errors.orgUnitPath &&
-    //         touched.orgUnitPath && (
-    //           <div className="invalid-feedback">{errors.orgUnitPath}</div>
-    //         )}
-    //         </Box>
-    //         </Flex>
-    //   <Flex>
-    //     <Box width={theBreaks}>
-          
-    //       <StyledInput
-    //         name="phone"
-    //         type="phone"
-    //         className={`${errors.phone &&
-    //           touched.phone &&
-    //           "is-invalid"}`}
-    //         value={values.phone || ""}
-    //         placeholder="Phone"
-    //         onChange={handleChange}
-    //       />
-    //       <div>{values.hash}</div>
-    //       {errors. phone &&
-    //         touched.phone && (
-    //           <div className="invalid-feedback">{errors.phone}</div>
-    //         )}
-    //         </Box>
-    //         </Flex>
+            {/* PUT MY STUFF HERE */}
+            <label htmlFor="groups" >
+<Text color="black" />
+</label>
+            <Toggle
+              name='groups'
+              icons={false}
+              defaultChecked={values.groups.includes(group.id)}
+              // value={values.groups.includes(group.id)}              
+              onChange={e => {
+                if (e.target.checked) arrayHelpers.push(group.id);
+                else {
+                  const idx = values.groups.indexOf(group.id);
+                  arrayHelpers.remove(idx);
+                  }
+                }
+              }
+              onBlur={setFieldTouched}
+              aria-label={group.name}
+            />
+            </Box>
+            </Flex>
+            <StyledHr />
+          </Box>
+          </Flex>
+                    // <label key={group.name} style={{display: "block"}}>
+                    //   <input
+                    //     name="groups"
+                    //     type="checkbox"
+                    //     value={group.id}
+                    //     checked={values.groups.includes(group.id)}
+                    //     onChange={e => {
+                    //       if (e.target.checked) arrayHelpers.push(group.id);
+                    //       else {
+                    //         const idx = values.groups.indexOf(group.id);
+                    //         arrayHelpers.remove(idx);
+                    //       }
+                    //     }
+                    //   }
+                    //   style={{transform: "scale(1.3)"}}
+                    //   />{" "}
+                    //   {group.name}
+                    // </label> 
+                ))}
+              </div>
+            )}
+          />
+              {/* <AnimatedMulti
+                name="groups"
+                value={groups[0]["id"]}
+                onChange={setFieldValue}
+                onBlur={setFieldTouched}
+                error={errors.groups}
+                styles={groups}
+                touched={touched.groups}
+                colourOptions={groups}
+                isMulti={true}
+                defaultValues={[{...groups[0]},{...groups[1]}]}
+              /> */}
+            </Box>
+          </Flex>
+              </Card>
+          <ButtonOutline disabled={isSubmitting} type="submit" mx={1} my={3} color="palevioletred">
+            {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
+          </ButtonOutline>
+          <DisplayFormikState {...values} />
+          <pre>{JSON.stringify( id )}</pre>
+      </Form>
+        </div>
+      )}
+    />
+  </div>
+);
 
-    //     <ButtonOutline type="submit" mx={1} my={3} color="pink">
-    //       {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
-    //     </ButtonOutline>
-    //     {/* <DisplayFormikState {...props} /> */}
-    //   </form>
-    //   {/* <h1>Returned Data</h1>
-    //   <div>{status ? <DisplayStatusData status={status} /> : ""}</div> */}
+const DemoCheckbox = () => (
+  <div>
+    <AddUserForm />
+  </div>
+);
 
-    // </div>
-  );
-};
+export { DemoCheckbox };
 
-export default withFormik({
-  // mapPropsToValues: props => ({
-  //   uri: props.uri.uri
-  // }),
+const StLabel = styled.label`
+  background: red;
+  display: block;
+  padding: 1rem;
+`;
 
-  validationSchema: Yup.object().shape({
-    // uri: Yup.string()
-    //   .url("Invalid URI format")
-    //   .required("A valid link is required")
-    //       .test(
-    //         'is-google',
-    //       <ErrorLabel>
-    // Uhhh this isn't google
-    //       </ErrorLabel>,
-    //       value => value === 'http://www.google.com'
-    //       )
-  }),
-
-  handleSubmit: (
-    values,
-    { resetForm, setStatus, setErrors, setSubmitting }
-  ) => {
-    console.log("handleSubmit");
-    console.log(JSON.stringify(values));
-    postData("/api/exercise/new-user", values)
-      // postData('http://192.168.180.162:8080/shorten', values)
-      .then(data => {
-        // postData('http://192.168.180.248:8080/api/getShortLink', { hash: e.target.value })
-        // if (data.errors) {
-        //   return () => {
-        //     this.setState({ errors: { msg: data.errors } }, () => console.error(`state in 'then-if' ${this.state}`));
-        //   };
-        // }
-        console.log(`data ${JSON.stringify(data, null, 2)}`);
-        // return data;
-        if (data.errors) {
-          return () => {
-            this.setState({ errors: { msg: data.errors } }, () =>
-              console.error(`state in 'then-if' ${this.state}`)
-            );
-          };
-        }
-        console.log(`state in 'then' ${JSON.stringify(data)}`);
-        console.log(data);
-        resetForm({});
-        setStatus(data);
-        // if (data == { errors: { msg: error } })
-      }) // JSON from `response.json()` call
-      .catch(error => console.error(error));
-    setSubmitting(false);
-
-    // setTimeout(() => {
-    //   // alert(JSON.stringify(values, null, 2));
-    //   JSON.stringify(values, null, 2);
-    //   setSubmitting(false);
-    // }, 1000);
+const StInput = styled.input`
+  &:checked + ${Label} {
+    background: blue;
   }
-})(UriForm);
+`;
+
+const StyledCheckbox = styled.div`
+  display: inline-block;
+  > input {
+    opacity: 0;
+    /* width: 20px;
+    height: 20px; // dim. de la case */
+  }
+  > input + label {
+    position: relative; /* permet de positionner les pseudo-éléments */
+    padding-left: 2px; /* fait un peu d'espace pour notre case à venir */
+    cursor: pointer;    /* affiche un curseur adapté */
+    &:before {
+      content: '';
+      position: absolute;
+      left:0; top: 1px;
+      width: 17px; height: 17px; /* dim. de la case */
+      border: 1px solid #aaa;
+      background: #f8f8f8;
+      border-radius: 3px; /* angles arrondis */
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.3) /* légère ombre interne */
+    }
+    &:after {
+      content: '✔';
+      position: absolute;
+      top: -1px; left: 2px;
+      font-size: 16px;
+      color: #09ad7e;
+      transition: all .2s; /* on prévoit une animation */
+    }
+  }
+  > input:not(:checked) + label {
+      &:after {
+        opacity: 0; /* coche invisible */
+        transform: scale(0); /* mise à l'échelle à 0 */
+      }
+  }
+  > input:disabled:not(:checked) + label {
+      &:before {
+        box-shadow: none;
+        border-color: #bbb;
+        background-color: #ddd;
+      }
+  }
+  > input:checked + label {
+    &:after {
+      opacity: 1; /* coche opaque */
+      transform: scale(1); /* mise à l'échelle 1:1 */
+    }
+  }
+  > input:disabled:checked + label {
+    &:after {
+      color: #999;
+    }
+  }
+  > input:disabled + label {
+    color: #aaa;
+  }
+  > input:checked:focus + label, input:not(:checked):focus + label {
+    &:before {
+      border: 1px dotted blue;
+    }
+  }
+`;
+
+
+// make this a round slider styles below
+const StyledCheckbox2 = styled.input`
+/* display:none; */
+
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+
+  &:focus {
+  box-shadow: 0 0 1px #2196F3;
+}
+  &:checked{
+  display:block;
+  background-color: #2196F3;
+  }
+`;
+
+const StyledHr = styled.hr`
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255,255,255, 0), rgba(255,255,255, 0.75), rgba(255,255,255, 0));
+`;

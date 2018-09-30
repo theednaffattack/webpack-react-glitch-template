@@ -63,15 +63,15 @@ class App extends Component {
       <Provider theme={theme}>
         <Flex bg="violet" m={0}>
           <Box flex={1} color="text" bg="violet">
-            <Box flex={1} color="text" bg="gray">
-              <Heading>bunraku</Heading>
+            <Box flex={1} px={4} py={2} color="text" bg="gray">
+              <Heading color="blue">people manager</Heading>
               {/* <nav p={3} bg="#eee" position="relative"> */}
               <NavLink to="/">Home</NavLink>{" "}
               <NavLink to="dashboard">Dashboard</NavLink>{" "}
               <NavLink to="api/users">Users</NavLink>{" "}
               <NavLink to="api/users/newUser">Add User</NavLink>{" "}
               <NavLink to="api/users/editUser">Edit User</NavLink>{" "}
-              <NavLink to="api/demo">Checkbox Demo</NavLink>{" "}
+              {/* <NavLink to="api/demo">Checkbox Demo</NavLink>{" "} */}
               {/* <NavLink to="api/exercise">Exercise</NavLink>{" "}
               <NavLink to="api/exercises/newUser">User</NavLink>{" "}
               <NavLink to="api/exercises/add">Add Exercise</NavLink> */}
@@ -80,7 +80,7 @@ class App extends Component {
             <PosedRouter>
               <Home path="/" />
               <Dashboard path="dashboard" />
-              <AddUser path="api/users/add" />
+              <Users path="api/users" />
               <AddUser path="api/users/newUser" />
               <EditUser path="api/users/editUser" />
               <DemoCheckbox path="api/demo" />

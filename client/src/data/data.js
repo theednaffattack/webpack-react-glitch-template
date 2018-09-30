@@ -1,4 +1,9 @@
 import mrGroups from './mr-groups';
+import userArray from '../data/mr-users';
+
+// exported file imports here
+export { mrGroups };
+export { userArray };
 
 export const colourOptions = [
   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
@@ -46,8 +51,6 @@ export const groupsTest = [
   // { value: 'silver', label: 'Silver', color: '#666666' },
 ];
 
-// put groups here
-export { mrGroups };
 
 
 export const stateOptions = [

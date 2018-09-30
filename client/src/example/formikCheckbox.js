@@ -1,11 +1,13 @@
 import React from "react";
-import { Formik, FieldArray } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import { Absolute, Box, Button, ButtonOutline as Btn, Flex, Input, Label, Relative, Switch, Text } from "rebass";
 import * as Yup from "yup";
 import styled from "styled-components";
 
 import Toggle from 'react-toggle';
 import MySelect  from '../components/MySelect';
+import { GroupSelect }  from '../example/groupSelect';
+
 import "react-toggle/style.css"
 import AnimatedMulti from "../components/AnimatedSelect";
 import { mrGroups as groups, groupsTest, orgUnitPathOptions } from "../data/data";
@@ -23,7 +25,7 @@ const ButtonOutline = styled(Btn)`
   border-color: palevioletred;
   transition: all 0.16s ease-in-out;
   &:hover {
-    color: pink;
+    color: #fff;
     background-color: palevioletred;
     border-color: palevioletred;
   }
@@ -176,16 +178,35 @@ const ErrorLabel = styled.span`
 
 const theBreaks = [ 3/4, 1/2, 1/2, 3/4 ];
 
-export const FormExample = () => (
+export const FormExample = ({
+  values,
+  touched,
+  dirty,
+  errors,
+  handleChange,
+  handleBlur,
+  handleSubmit,
+  handleReset,
+  setFieldValue,
+  setFieldTouched,
+  isSubmitting,
+  resetForm
+}) => (
   <div>
+
     <Formik
-      initialValues={{ groups: ["01jlao463vsja9a"], inviteToSlack: true, suspended: false }}
-      onSubmit={values =>
+      initialValues={{ groups: ["01jlao463vsja9a"], insertIntoEnvoy: false, inviteToSlack: true, shareCorpCal: true, suspended: false }}
+      onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
-        }, 500)
+        }, 500);
+        console.log(`state in 'then' ${JSON.stringify({key: 'value'})}`);
+        actions.resetForm();
+        !actions.isSubmitting;
+      }
       }
       render={({ 
+        children,
         id,
         values,
         touched,
@@ -199,28 +220,13 @@ export const FormExample = () => (
         handleSubmit,
         handleReset,
         hash,
-        status }) => (
+        status
+      }, ...props) => (
         <div>
+
+          <DisplayFormikState {...values} />
+      <Form className="" onSubmit={handleSubmit}>
           
-          <Flex>
-            <Box width={theBreaks}>
-              <StyledInput
-                name="group"
-                type="text"
-                className={`${errors.group &&
-                  touched.group &&
-                  "is-invalgroup"}`}
-                value={values.group || ""} // {values.group || ""}
-                placeholder="Group Name(s)"
-                onChange={handleChange}
-              />
-              <div>{values.hash}</div>
-              {errors.group &&
-                touched.group && (
-                  <div className="invalgroup-feedback">{errors.group}</div>
-                )}
-            </Box>
-          </Flex>
           <Flex>
             <Box width={theBreaks}>
               <StyledInput
@@ -280,16 +286,33 @@ export const FormExample = () => (
             </Flex>
           <Flex>
             <Box width={theBreaks}>
-              {/* PUT MY STUFF HERE */}
+              <StyledInput
+                name="personalEmail"
+                type="text"
+                className={`${errors.personalEmail &&
+                  touched.personalEmail &&
+                  "is-invalid"}`}
+                value={values.personalEmail || ""}
+                placeholder="Personal Email"
+                onChange={handleChange}
+              />
+              <div>{values.hash}</div>
+              {errors. personalEmail &&
+                touched.personalEmail && (
+                  <div className="invalid-feedback">{errors.personalEmail}</div>
+                )}
+            </Box>
+            </Flex>
+          {/* <Flex>
+            <Box width={theBreaks}>
               <label htmlFor="suspended" >
-  {values.suspended === "true" || values.suspended === true ? <Text children="Suspended" /> : <Text children="Active" />}
+  {values.suspended === true ? <Text children="Suspended" /> : <Text children="Active" />}
   </label>
               <Toggle
-                
-                defaultChecked={!values.suspended}
+                // defaultChecked={!values.suspended}
                 name='suspended'
                 icons={false}
-                // value={values.suspended}
+                value={!values.suspended}
                 // onChange={setFieldValue}
                 onChange={handleChange}
                 onBlur={setFieldTouched}
@@ -297,7 +320,7 @@ export const FormExample = () => (
               />
   
             </Box>
-            </Flex>
+            </Flex> */}
           <Flex>
             <Box width={theBreaks}>
               {/* PUT MY STUFF HERE */}
@@ -317,7 +340,47 @@ export const FormExample = () => (
   
             </Box>
             </Flex>
-        <Flex>
+          <Flex>
+            <Box width={theBreaks}>
+              {/* PUT MY STUFF HERE */}
+              <label htmlFor="inviteToSlack" >
+  {values.insertIntoEnvoy === "true" || values.insertIntoEnvoy === true ? <Text children="Insert into Envoy" /> : <Text children="Don't Insert into Envoy" />}
+  </label>
+              <Toggle
+                name='insertIntoEnvoy'
+                icons={false}
+                defaultChecked={values.insertIntoEnvoy}
+                // value={values.insertIntoEnvoy}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="Insert Into Envoy"
+              />
+  
+            </Box>
+            </Flex>
+          <Flex>
+            <Box width={theBreaks}>
+              {/* PUT MY STUFF HERE */}
+              <label htmlFor="shareCorpCal" >
+  {values.shareCorpCal === "true" || values.shareCorpCal === true ? <Text children='Share "Corp" Calendar' /> : <Text children='Do not Share "Corp" Calendar' />}
+  </label>
+              <Toggle
+                name='shareCorpCal'
+                icons={false}
+                defaultChecked={values.shareCorpCal}
+                // value={values.shareCorpCal}
+                // onChange={setFieldValue}
+                onChange={handleChange}
+                onBlur={setFieldTouched}
+                aria-label="Insert Into Envoy"
+              />
+  
+            </Box>
+            </Flex>
+
+            
+            {/* <Flex>
           <Box width={theBreaks}>
             <label htmlFor="groupsTest" >
               groupsTest
@@ -335,7 +398,7 @@ export const FormExample = () => (
               defaultValues={[{...groupsTest[0]},{...groupsTest[1]}]}
             />
           </Box>
-        </Flex>
+        </Flex> */}
           <Flex>
             <Box width={theBreaks}>
 
@@ -384,10 +447,12 @@ export const FormExample = () => (
               /> */}
             </Box>
           </Flex>
-          <ButtonOutline type="submit" mx={1} my={3} color="palevioletred">
+          <ButtonOutline disabled={isSubmitting} type="submit" mx={1} my={3} color="palevioletred">
             {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
-          </ButtonOutline> <CustomButton>Hello</CustomButton>
+          </ButtonOutline>
           <DisplayFormikState {...values} />
+          <pre>{JSON.stringify( id )}</pre>
+      </Form>
         </div>
       )}
     />
