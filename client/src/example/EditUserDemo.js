@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form, FieldArray } from "formik";
-import { Absolute, Box, Button, ButtonOutline as Btn, Flex, Input, Label, Relative, Switch, Text } from "rebass";
+import { Absolute, Box, Button, ButtonOutline as Btn, Card, Flex, Input, Label, Relative, Switch, Text } from "rebass";
 import * as Yup from "yup";
 import styled from "styled-components";
 
@@ -8,7 +8,7 @@ import Toggle from 'react-toggle';
 import MySelect  from '../components/MySelect';
 import { GroupSelect }  from '../example/groupSelect';
 import userSingleQuery from '../queries/userSingleQuery';
-
+import userSingleWithGroupsQuery from '../queries/userSingleWithGroupsQuery';
 import "react-toggle/style.css"
 import AnimatedMulti from "../components/AnimatedSelect";
 import { mrGroups as groups, groupsTest, orgUnitPathOptions } from "../data/data";
@@ -183,7 +183,7 @@ const theBreaks = [ 3/4, 1/2, 1/2, 3/4 ];
 // let userId = "114021678443709883275"
 
 const SingleUserEdit = ({ userKey }) => (
-  <Query query={userSingleQuery} variables={{ userKey }}>
+  <Query query={userSingleWithGroupsQuery} variables={{ userKey }}>
     {({ loading, error, data }) => {
       if (loading) return 'LOADING'
       if (error)
@@ -231,7 +231,17 @@ export const FormExample = ({
   <div>
 
     <Formik
-      initialValues={{ givenName: data ? data.user.givenName : "", familyName: data ? data.user.familyName : "", primaryEmail: data ? data.user.primaryEmail : "", userId, groups: ["01jlao463vsja9a"], insertIntoEnvoy: false, inviteToSlack: true, shareCorpCal: true, suspended: false }}
+      initialValues={{
+        givenName: data ? data.userWithGroups.givenName : "",
+        familyName: data ? data.userWithGroups.familyName : "",
+        primaryEmail: data ? data.userWithGroups.primaryEmail : "",
+        userId,
+        groups: data ? data.userWithGroups.groups.map(x => x.id) : [],
+        insertIntoEnvoy: false,
+        inviteToSlack: true,
+        shareCorpCal: true,
+        suspended: false
+      }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -257,10 +267,10 @@ export const FormExample = ({
         handleReset,
         hash,
         status
-      }, ...props) => (
+      }, props) => (
         <div>
 
-          <DisplayFormikState {...values} />
+          {/* <DisplayFormikState {...values} /> */}
 
       <Form className="" onSubmit={handleSubmit}>
           
@@ -340,24 +350,6 @@ export const FormExample = ({
                 )}
             </Box>
             </Flex>
-          {/* <Flex>
-            <Box width={theBreaks}>
-              <label htmlFor="suspended" >
-  {values.suspended === true ? <Text children="Suspended" /> : <Text children="Active" />}
-  </label>
-              <Toggle
-                // defaultChecked={!values.suspended}
-                name='suspended'
-                icons={false}
-                value={!values.suspended}
-                // onChange={setFieldValue}
-                onChange={handleChange}
-                onBlur={setFieldTouched}
-                aria-label="User status"
-              />
-  
-            </Box>
-            </Flex> */}
           <Flex>
             <Box width={theBreaks}>
               {/* PUT MY STUFF HERE */}
@@ -415,75 +407,80 @@ export const FormExample = ({
   
             </Box>
             </Flex>
-
             
-            {/* <Flex>
-          <Box width={theBreaks}>
-            <label htmlFor="groupsTest" >
-              groupsTest
-            </label>
-            <AnimatedMulti
-              name="groupsTest"
-              value={groupsTest[0]["value"]}
-              onChange={setFieldValue}
-              onBlur={setFieldTouched}
-              error={errors.groupsTest}
-              styles={groupsTest}
-              touched={touched.groupsTest}
-              colourOptions={groupsTest}
-              isMulti={true}
-              defaultValues={[{...groupsTest[0]},{...groupsTest[1]}]}
-            />
-          </Box>
-        </Flex> */}
+
+        {/* GROUPS CARD */}
+<Card
+  css={{
+    maxWidth: '600px'
+  }}
+  my={3}
+  px={4}
+  pt={3}
+  pb={3}
+  mx="auto"
+  bg="transparent" 
+  borderRadius={8}
+  boxShadow='0 2px 16px rgba(0, 0, 0, 0.25)'>
+
           <Flex>
-            <Box width={theBreaks}>
-
-
+            <Box width={1}>
               <label htmlFor="groups" >
-                Groups
+                <Text fontSize={[ 3, 4, 4 ]} py={2}>M.R. Groups</Text>
               </label>
+            <StyledHr />
             <FieldArray
             name="groups"
             render={arrayHelpers => (
               <div>
                 {groups.map(group => (
-                  <div key={group.name}>
-                    <label>
-                      <input
-                        name="groups"
-                        type="checkbox"
-                        value={groups.id}
-                        checked={values.groups.includes(group.id)}
-                        onChange={e => {
-                          if (e.target.checked) arrayHelpers.push(group.id);
-                          else {
-                            const idx = values.groups.indexOf(group.id);
-                            arrayHelpers.remove(idx);
-                          }
-                        }}
-                      />{" "}
-                      {group.name}
-                    </label>
-                  </div>
+
+              
+          <Flex key={group.id}>
+          <Box width={4/5} m={0} p={0} bg={values.groups.includes(group.id) ? 'rgba(255, 0, 255, 0.25)' : 'transparent'}>
+<Flex>
+          <Box width={4/5} my={3}>
+  <Text
+  color='white'
+  >
+    {group.name}
+  </Text>
+  </Box>
+  <Box width={1/5} my="auto">
+
+            {/* PUT MY STUFF HERE */}
+            <label htmlFor="groups" >
+<Text color="black" />
+</label>
+            <Toggle
+              name='groups'
+              icons={false}
+              defaultChecked={values.groups.includes(group.id)}
+              // value={values.groups.includes(group.id)}              
+              onChange={e => {
+                if (e.target.checked) arrayHelpers.push(group.id);
+                else {
+                  const idx = values.groups.indexOf(group.id);
+                  arrayHelpers.remove(idx);
+                  }
+                }
+              }
+              onBlur={setFieldTouched}
+              aria-label={group.name}
+            />
+            </Box>
+            </Flex>
+            <StyledHr />
+          </Box>
+          </Flex>
                 ))}
               </div>
             )}
           />
-              {/* <AnimatedMulti
-                name="groups"
-                value={groups[0]["id"]}
-                onChange={setFieldValue}
-                onBlur={setFieldTouched}
-                error={errors.groups}
-                styles={groups}
-                touched={touched.groups}
-                colourOptions={groups}
-                isMulti={true}
-                defaultValues={[{...groups[0]},{...groups[1]}]}
-              /> */}
             </Box>
           </Flex>
+              </Card>
+          
           <ButtonOutline disabled={isSubmitting} type="submit" mx={1} my={3} color="palevioletred">
             {isSubmitting ? "WAIT PLZ" : "SUBMIT"}
           </ButtonOutline>
@@ -534,3 +531,12 @@ const Dogs = ({ onDogSelected }) => (
     }}
   </Query>
 );
+
+
+const StyledHr = styled.hr`
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255,255,255, 0), rgba(255,255,255, 0.75), rgba(255,255,255, 0));
+`;

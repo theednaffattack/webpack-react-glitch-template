@@ -15,7 +15,7 @@ const EditUser = props => (
       <Box px={2} py={2} width={[1, 1, 1]}>
         {/* <EditUserFormContainer /> */}
         <SingleUserEdit userKey={props.userId} />
-        <DemoCheckbox userId={props.userId} />
+        {/* <DemoCheckbox userId={props.userId} /> */}
       </Box>
     </Flex>
   </Box>
