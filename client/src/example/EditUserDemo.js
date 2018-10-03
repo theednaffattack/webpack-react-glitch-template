@@ -236,7 +236,10 @@ export const FormExample = ({
         familyName: data ? data.userWithGroups.familyName : "",
         primaryEmail: data ? data.userWithGroups.primaryEmail : "",
         userId,
-        groups: data ? data.userWithGroups.groups.map(x => x.id) : [],
+        // Below: if we're loading => [], if the response Array is null => []
+        groups: (data) && (data.userWithGroups.groups !== null) 
+                ? data.userWithGroups.groups.map(group => group.id)
+                : [],
         insertIntoEnvoy: false,
         inviteToSlack: true,
         shareCorpCal: true,
