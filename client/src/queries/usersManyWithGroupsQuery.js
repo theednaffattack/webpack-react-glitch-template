@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export default gql`
-  query userWithGroups($userKey: String) {
-    userWithGroups(userKey: $userKey) {
+  query usersWithGroups($maxResults: Int, $orderBy: String, $domain: String) {
+    usersWithGroups(maxResults: $maxResults, orderBy: $orderBy, domain: $domain) {
       id
       fullName
       primaryEmail

@@ -34,4 +34,4 @@ class FuzzyFilter extends Component {
   }
 }
 
-module.exports = { FuzzyFilter };
+export { FuzzyFilter };

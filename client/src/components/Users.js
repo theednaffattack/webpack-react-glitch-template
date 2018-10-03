@@ -22,9 +22,9 @@ const Users = (props) => (
       columns={columns}
       scroll={{ x: 400, y: 500 }}
       data={
-        {output1.map(x => {
+        userArray.map(x => {
           return <span key={x.primaryEmail}>{x.primaryEmail} </span>;
-        })} }
+        })} 
       components={components}
       showHeader={false}
       style={{borderCollapse: "collapse"}}

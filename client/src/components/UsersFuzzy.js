@@ -15,7 +15,8 @@ import { userArray }  from '../data/data';
 class UsersFuzzy extends React.Component {
   state = {
     searchVal: "",
-    data: userArray
+    data: this.props.data,
+    resultsLength: this.props.data.length
   };
   someCounter = 100;
 
@@ -47,25 +48,31 @@ class UsersFuzzy extends React.Component {
   }
   render() {
     // console.log(userData)
-    const { searchVal, data } = this.state;
+    const { searchVal, data, resultsLength } = this.state;
     const searchOn = searchVal.length > 0;
 
     let output1;
     let output2;
+    let output1Length;
 
     if (searchOn && this.fuse(data).length > 0) {
       output1 = this.fuse(data);
+      output1Length = output1.length;
       output2 = this.fuse(data).filter(e => this.fuse(data)).map(r => r.emails)[0];
     } else if (searchOn && this.fuse(data, 2).length > 0) {
       output1 = this.fuse(data, 2);
+      output1Length = output1.length;
       // output2 = this.fuse(this.nestedUniq(data, 2));
     } else if (searchOn && this.fuse(data, 2).length === 0 && this.fuse(data).length === 0) {
       output1 = [{ fullName: "No Results" }];
+      output1Length = 0;
       // output2 = [{ name: "No Res" }];
     } 
     else {
       // data.forEach(el => { el.clickOrder = this.someCounter++*30 })
       output1 = data;
+
+      output1Length = output1.length;
       // output2 = this.nestedUniq(data);
     }
 
@@ -74,6 +81,9 @@ class UsersFuzzy extends React.Component {
               <Box bg="blue" p={4} width={[1, 1, 1 / 2]}>
               <Heading f={[4, 5, 6, 7]} color="white">Users</Heading>
               <Card p={0} >
+              <Text>
+                Showing {output1Length}
+              </Text>
               <StyledInput
               placeholder="Search"
               onChange={e => this.setState({ searchVal: e.target.value })} />
@@ -116,7 +126,7 @@ const Users = (props) => (
   </Flex>
 );
 
-export default UsersFuzzy;
+export { UsersFuzzy };
 
 const link = "/api/users/edit/";
 

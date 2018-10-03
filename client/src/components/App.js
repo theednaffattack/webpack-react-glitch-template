@@ -9,13 +9,26 @@ import "../styles/App.css";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Exercises from "./Exercises";
-import UsersFuzzy from "./UsersFuzzy";
+import { UsersFuzzy } from "./UsersFuzzy";
 import AddExercise from "./AddExercise";
 import AddUsers from "./AddExercise";
 import AddUser from "./AddUser";
 import EditUser from "./EditUser";
 import { DemoCheckbox } from "../example/formikCheckbox";
 import { FuseReact } from "../example/FuseReactAdapted";
+import { AllUsers } from "../example/QueryUsers";
+
+
+
+const domain="madison-reed.com";
+const orderBy="familyName";
+const maxResults=200;
+
+const searchObj = {
+  domain,
+  orderBy,
+  maxResults
+}
 
 injectGlobal`
   * { box-sizing: border-box; }
@@ -72,7 +85,7 @@ class App extends Component {
               <NavLink to="api/users">Users</NavLink>{" "}
               <NavLink to="api/users/newUser">Add User</NavLink>{" "}
               <NavLink to="api/users/editUser">Edit User</NavLink>{" "}
-              <NavLink to="fuse">Fuse Demo</NavLink>{" "}
+              <NavLink to="fuse">Fuzzy User Search Demo</NavLink>{" "}
               {/* <NavLink to="api/demo">Checkbox Demo</NavLink>{" "} */}
               {/* <NavLink to="api/exercise">Exercise</NavLink>{" "}
               <NavLink to="api/exercises/newUser">User</NavLink>{" "}
@@ -82,12 +95,12 @@ class App extends Component {
             <PosedRouter>
               <Home path="/" />
               <Dashboard path="dashboard" />
-              <UsersFuzzy path="api/users" />
+              <AllUsers path="api/users" />
               <AddUser path="api/users/newUser" />
               {/* <EditUser path="api/users/editUser" /> */}
               <EditUser path="api/users/edit/:userId" />
               <DemoCheckbox path="api/demo" />
-              <FuseReact path="fuse" />
+              <AllUsers domain={domain} orderBy={orderBy} maxResults={maxResults} path="fuse" />
             </PosedRouter>
           </Box>
         </Flex>
