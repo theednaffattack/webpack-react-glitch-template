@@ -3,11 +3,12 @@ import React from "react";
 // import Logo from "./Logo";
 // import { Router, Link } from "@reach/router";
 import { FuzzyFilter } from './FuzzyFilter';
-import { Box, Card, Flex, Heading, Text } from 'rebass';
+import { Box, Card, Flex, Heading, Button, Text } from 'rebass';
 import styled from 'styled-components';
 import Table from 'rc-table';
 import _ from "lodash/fp";
 import Fuse from "fuse.js";
+import InlineSVG from 'svg-inline-react';
 import '../styles/rc-table.css';
 
 import { userArray }  from '../data/data';
@@ -72,7 +73,7 @@ class UsersFuzzy extends React.Component {
       // data.forEach(el => { el.clickOrder = this.someCounter++*30 })
       output1 = data;
 
-      output1Length = output1.length;
+      // output1Length = output1.length;
       // output2 = this.nestedUniq(data);
     }
 
@@ -80,10 +81,10 @@ class UsersFuzzy extends React.Component {
             <Flex>
               <Box bg="blue" p={4} width={[1, 1, 1 / 2]}>
               <Heading f={[4, 5, 6, 7]} color="white">Users</Heading>
-              <Card p={0} >
-              <Text>
-                Showing {output1Length}
+              <Text color="white">
+                {/* Showing {output1Length} of {data.length} */}
               </Text>
+              <Card p={0} >
               <StyledInput
               placeholder="Search"
               onChange={e => this.setState({ searchVal: e.target.value })} />
@@ -130,13 +131,30 @@ export { UsersFuzzy };
 
 const link = "/api/users/edit/";
 
+
 const columns = [
   {
     title: 'Name',
     dataIndex: 'fullName',
     key: (record)  => {record.id},
     render(text, record) {
-      return <a href={link+record.id}>{text}</a>;
+      return <Flex>
+        <Box width={[1/5]} pl={2}>
+          <Box style={{maxWidth: "35px", width: "35px"}}>
+            <InlineSVG src={require("../../../dist/logos/default-user.svg")} />
+          </Box>
+        </Box>
+        <Box width={[4/5]}>
+          <Flex flexDirection="column">
+            <Box>
+              <a href={link+record.id}>{text}</a>
+            </Box>
+            <Box>
+              <a href={'mailto:' + record.primaryEmail}>{record.primaryEmail}</a>
+            </Box>
+          </Flex>
+        </Box>
+      </Flex> ;
     },
     width: 200
   },
@@ -144,8 +162,8 @@ const columns = [
     title: 'Email',
     dataIndex: 'id',
     key: (text, record) => {text + record.id},
-    render(text, record) {
-      return <a href={'mailto:' + record.primaryEmail}>{record.primaryEmail}</a>;
+    render() {
+      return <Button bg="Firebrick">Delete</Button>;
     },
     width: 200
   }
@@ -162,11 +180,8 @@ const data = [
 const BodyRow = styled.tr`
   font-size: 1rem;
   color: #000;
-  /* border: 1px, solid, #000; */
   &:hover {
-    /* background: rgba(219, 112, 147, .5) !important; */
-    background: rgba(218, 165, 32,.5) !important;
-    /* color: white !important; */
+    background: rgba(255, 20, 147, .5) !important;
   }
   &:nth-child(even) {background: #ecf0f1}
 `;
@@ -225,3 +240,4 @@ const StyledInput = styled.input`
     border-bottom: 4px solid #df6659;
   }
 `;
+

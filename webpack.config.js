@@ -22,11 +22,17 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
-      }
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+    }
     ]
   },
   devServer: {
-    historyApiFallback: true
+    historyApiFallback: true,
+    compress: true,
+    port: 9000
   },
   plugins: [
     new HtmlWebpackPlugin({

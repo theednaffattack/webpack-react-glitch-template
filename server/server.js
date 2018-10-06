@@ -57,7 +57,7 @@ const app = express();
 
 const connectionString = process.env.MONGO_ATLAS_CONNECTION_STRING;
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 6060;
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(cors(corsOptions));
