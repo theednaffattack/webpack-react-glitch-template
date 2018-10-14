@@ -12,9 +12,9 @@ import Toggle from 'react-toggle';
 import InlineSVG from 'svg-inline-react';
 import '../styles/rc-table.css';
 
-import { userArray }  from '../data/data';
+import groupsArray  from '../data/mr-groups.js';
 
-class UsersFuzzy extends React.Component {
+class GroupsFuzzy extends React.Component {
   state = {
     searchVal: "",
     data: this.props.data,
@@ -24,8 +24,8 @@ class UsersFuzzy extends React.Component {
 
   fuse(e, y) {
     const nested = y === 2 ?
-  [{ name: "emails.address", weight: 0.4 } /* , { name: "emails.vals", weight: 0.3 } */ ] :
-     [{ name: "fullName", weight: 0.4 } /* , { name: "primaryEmail", weight: 0.2 }, { name: "orgUnitPath", weight: 0.2 } */ ];
+  [{ name: "email", weight: 0.4 } /* , { name: "emails.vals", weight: 0.3 } */ ] :
+     [{ name: "name", weight: 0.4 } /* , { name: "primaryEmail", weight: 0.2 }, { name: "orgUnitPath", weight: 0.2 } */ ];
     const threshhold = y === 2 ? 0.3 : 0.3;
     // 2 means it is nested
     var opts = {
@@ -40,7 +40,8 @@ class UsersFuzzy extends React.Component {
   // stuff
 
   nestedUniq(e) {
-    const res = _.flow(_.flatMap("emails"), _.values(), _.uniqBy("address"))(e);
+    const res = _.flow( _.values(), _.uniqBy("email"))(e);
+    // const res = _.flow(_.flatMap("email"), _.values(), _.uniqBy("address"))(e);
     // THIS will cause an issue IF have two sub-tags with the same name (differing vals). Is this a super rare case? Orange and Orange?
     // COULD do uniqueBy vals instead?
     // const err = _.flow(_.flatMap("typechild"), _.values(), _.uniqBy("name"))(e)
@@ -79,37 +80,88 @@ class UsersFuzzy extends React.Component {
     }
 
     return (
-            <Flex>
-              <Box bg="blue" p={4} width={[1, 1, 1 / 2]}>
-              <Heading f={[4, 5, 6, 7]} color="white">Users</Heading>
-              <Text color="white">
-                {/* Showing {output1Length} of {data.length} */}
-              </Text>
-              <Card p={0} >
-              <StyledInput
-              placeholder="Search"
-              onChange={e => this.setState({ searchVal: e.target.value })} />
-              <Table
-                columns={columns}
-                scroll={{ x: 400, y: 500 }}
-                data={output1}
-                components={components}
-                showHeader={false}
-                style={{borderCollapse: "collapse"}}
-              />
-              </Card>
-              </Box>
+
+<Card
+  css={{
+    maxWidth: '600px'
+  }}
+  my={3}
+  px={4}
+  pt={3}
+  pb={3}
+  mx="auto"
+  bg="transparent" 
+  borderRadius={8}
+  boxShadow='0 2px 16px rgba(0, 0, 0, 0.25)'>
+
+          <Flex>
+            <Box width={1}>
+              <label htmlFor="groups" >
+                <Text fontSize={[ 3, 4, 4 ]} py={2}>M.R. Groups</Text>
+              </label>
+            <StyledHr />
+            <FieldArray
+            name="groups"
+            render={arrayHelpers => (
+              <div>
+                {groupsArray.map(group => (
+
+              
+          <Flex key={group.id}>
+          <Box width={4/5} m={0} p={0} bg={values.groups.includes(group.id) ? 'rgba(255, 0, 255, 0.25)' : 'transparent'}>
+<Flex>
+          <Box width={4/5} my={3}>
+  <Text
+  color='white'
+  >
+    {group.name}
+  </Text>
+  </Box>
+  <Box width={1/5} my="auto">
+
+            {/* PUT MY STUFF HERE */}
+            <label htmlFor="groups" >
+<Text color="black" />
+</label>
+            <Toggle
+              name='groups'
+              icons={false}
+              defaultChecked={values.groups.includes(group.id)}
+              // value={values.groups.includes(group.id)}              
+              onChange={e => {
+                if (e.target.checked) arrayHelpers.push(group.id);
+                else {
+                  const idx = values.groups.indexOf(group.id);
+                  arrayHelpers.remove(idx);
+                  }
+                }
+              }
+              onBlur={setFieldTouched}
+              aria-label={group.name}
+            />
+            </Box>
             </Flex>
+            <StyledHr />
+          </Box>
+          </Flex>
+                ))}
+              </div>
+            )}
+          />
+            </Box>
+          </Flex>
+              </Card>
+          
     );
   }
 }
 
 
-const Users = (props) => (
+const Groups = (props) => (
   <Flex>
     <Box bg="blue" p={4} width={[1, 1, 1 / 2]}>
     <FuzzyFilter />
-    <Heading f={[4, 5, 6, 7]} color="white">Users</Heading>
+    <Heading f={[4, 5, 6, 7]} color="white">Groups</Heading>
     <Card p={0} >
     <StyledInput placeholder="Search" />
     <Table
@@ -117,7 +169,7 @@ const Users = (props) => (
       scroll={{ x: 300, y: 500 }}
       data={
         output1.map(x => {
-          return <span key={x.primaryEmail}>{x.primaryEmail} </span>;
+          return <span key={x.email}>{x.email} </span>;
         }) }
       components={components}
       showHeader={false}
@@ -128,15 +180,15 @@ const Users = (props) => (
   </Flex>
 );
 
-export { UsersFuzzy };
+export { GroupsFuzzy };
 
 const link = "/api/users/edit/";
 
 
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'fullName',
+    title: 'Group Name',
+    dataIndex: 'name',
     key: (record)  => {record.id},
     render(text, record) {
       return <Flex>
@@ -151,7 +203,7 @@ const columns = [
               <a href={link+record.id}>{text}</a>
             </Box>
             <Box>
-              <a href={'mailto:' + record.primaryEmail}>{record.primaryEmail}</a>
+              <a href={'mailto:' + record.email}>{record.email}</a>
             </Box>
           </Flex>
         </Box>
@@ -160,26 +212,26 @@ const columns = [
     width: 200
   },
   {
-    title: 'Suspended',
-    dataIndex: 'suspended',
-    rowKey: (text, record) => {text + record.suspended},
-    key: (text, record) => {text + record.suspended},
+    title: 'Name',
+    dataIndex: 'name',
+    rowKey: (text, record) => {text + record.name},
+    key: (text, record) => {text + record.name},
     render(text, record) {
       return <Flex>
         <Box width={1/2}>
 
               {/* {record.suspended == true ? "Suspended" : "Active"} */}
               {/* <pre>{JSON.stringify(record, null, 2)}</pre> */}
-              {record.suspended.toString() === 'true' ? <Text>Suspended</Text> : <Text>Active</Text>}
+              {record.name ? <Text>{record.name}</Text> : <Text>No Name Detected!!!</Text>}
               <Toggle
-                name='suspended'
+                name='name'
                 icons={false}
-                defaultChecked={!record.suspended}
+                defaultChecked={!record.name}
                 // value={values.inviteToSlack}
                 // onChange={setFieldValue}
                 // onChange={handleChange}
                 // onBlur={setFieldTouched}
-                aria-label="Suspended User?"
+                aria-label="Group Name"
               />
         </Box>
             </Flex>;

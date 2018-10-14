@@ -9,6 +9,7 @@ export default gql`
       givenName
       familyName
       lastLoginTime
+      suspended
       groups {
         name
         email
